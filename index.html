@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <title>Stüdyo Takip Sistemi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --bg: #F6F4EF;
+        --panel: #FFFFFF;
+        --ink: #26251F;
+        --ink-soft: #6B695F;
+        --sage: #5B6E52;
+        --sage-dark: #455339;
+        --sage-soft: #E7EBE0;
+        --clay: #A9754F;
+        --clay-soft: #F0E4D8;
+        --alert: #AE4F3D;
+        --alert-soft: #F4E3DE;
+        --line: #D8D2C4;
+        --line-strong: #BCB5A5;
+        --partial-soft: #F2E2A8;
+        --gray: #9C9A90;
+        --gray-soft: #EDEBE4;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; max-width: 100%; }
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+
+    header.top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .studio-name {
+        font-family: 'Fraunces', serif;
+        font-weight: 600;
+        font-size: 28px;
+        margin: 0;
+    }
+
+    .header-links {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .role-switch, .change-pass-link {
+        font-size: 12px;
+        color: var(--ink-soft);
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+    .stat {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 16px;
+        text-align: center;
+        min-width: 95px;
+    }
+
+    .stat .num {
+        font-family: 'Fraunces', serif;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .stat .num.alert { color: var(--alert); }
+    .stat .num.clay { color: var(--clay); }
+    .stat .label { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 22px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+        padding: 10px 4px;
+        margin-right: 20px;
+        background: none;
+        border: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--ink-soft);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        white-space: nowrap;
+        flex: none;
+    }
+
+    .tab-btn.on {
+        color: var(--ink);
+        border-bottom-color: var(--sage);
+        font-weight: 600;
+    }
+
+    .view { display: none; }
+    .view.on { display: block; }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .search {
+        flex: 1;
+        min-width: 200px;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        font-size: 14px;
+    }
+
+    .filter-chip {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink-soft);
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .filter-chip.on {
+        background: var(--sage-soft);
+        border-color: var(--sage);
+        color: var(--sage-dark);
+        font-weight: 600;
+    }
+
+    .btn-add {
+        padding: 9px 15px;
+        background: var(--sage);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-add:hover { background: var(--sage-dark); }
+
+    .btn-ghost {
+        padding: 8px 13px;
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--ink-soft);
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .row {
+        background: var(--panel);
+        padding: 14px 16px;
+        display: grid;
+        grid-template-columns: 1.5fr 1.3fr 1.1fr 0.8fr auto;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .row.head {
+        background: transparent;
+        padding: 0 16px 8px;
+        font-size: 12px;
+        color: var(--ink-soft);
+    }
+
+    .m-name { font-weight: 600; font-size: 14.5px; }
+    .m-phone { font-size: 12.5px; color: var(--ink-soft); margin-top: 1px; }
+    .m-sched-sub { font-size: 11.5px; color: #8A887C; margin-top: 3px; line-height: 1.35; }
+    .m-pkg { font-size: 13px; }
+    .sessions-wrap { display: flex; align-items: center; gap: 6px; }
+    .sessions { font-variant-numeric: tabular-nums; font-size: 14.5px; font-weight: 600; }
+    .sessions.low { color: var(--alert); }
+
+    .btn-step {
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--ink);
+    }
+    .btn-step:hover { background: var(--sage-soft); border-color: var(--sage); }
+
+    .btn-multi-read {
+        background: #F0E6D2;
+        border: 1px solid var(--clay);
+        color: var(--clay);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+    .btn-multi-read:hover { background: var(--clay); color: #fff; }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge.active { background: var(--sage-soft); color: var(--sage-dark); }
+    .badge.low { background: var(--alert-soft); color: var(--alert); }
+    .badge.done { background: #EFEDE6; color: var(--ink-soft); }
+    .badge.frozen { background: var(--alert-soft); color: var(--alert); }
+
+    .row-actions { display: flex; gap: 5px; justify-content: flex-end; flex-wrap: wrap; }
+    .icon-btn {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 6px;
+        padding: 5px 9px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .icon-btn:hover { border-color: var(--sage); color: var(--sage-dark); }
+    .icon-btn.danger:hover { border-color: var(--alert); color: var(--alert); }
+
+    .sched-table-wrap {
+        overflow-x: auto;
+        max-width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+    }
+
+    table.sched-table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 960px;
+    }
+
+    table.sched-table tr {
+        border-bottom: 2px solid var(--line-strong);
+    }
+
+    table.sched-table th, table.sched-table td {
+        border: 1px solid var(--line);
+        padding: 0;
+    }
+
+    table.sched-table thead th {
+        background: var(--sage-soft);
+        color: var(--sage-dark);
+        font-size: 13px;
+        padding: 10px 8px;
+        text-align: center;
+        border-bottom: 2px solid var(--line-strong);
+    }
+
+    table.sched-table thead th:first-child {
+        text-align: left;
+        padding-left: 12px;
+        position: sticky;
+        left: 0;
+        z-index: 3;
+    }
+
+    table.sched-table td.time-cell {
+        background: var(--bg);
+        font-weight: 600;
+        font-size: 13px;
+        padding: 10px 12px;
+        white-space: nowrap;
+        color: var(--ink-soft);
+        position: sticky;
+        left: 0;
+        z-index: 2;
+    }
+
+    table.sched-table td.slot-cell {
+        min-width: 135px;
+        vertical-align: top;
+        padding: 5px;
+    }
+
+    .inst-group-box {
+        background: #FAF8F5;
+        border: 1px solid #E6E2D8;
+        border-radius: 6px;
+        padding: 4px 5px;
+        margin-bottom: 5px;
+    }
+    .inst-group-box:last-child { margin-bottom: 0; }
+
+    .inst-group-title {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--sage-dark);
+        border-bottom: 1px solid #EBE7DD;
+        padding-bottom: 2px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .cell-entry {
+        padding: 6px 6px;
+        border-radius: 5px;
+        background: var(--sage-soft);
+        margin-bottom: 4px;
+        font-size: 11.5px;
+        line-height: 1.3;
+        cursor: pointer;
+    }
+    .cell-entry:last-child { margin-bottom: 0; }
+    .cell-entry .en-name { font-weight: 600; color: var(--sage-dark); }
+    .cell-entry .en-meta { color: var(--ink-soft); font-size: 10.5px; margin-top: 1px; }
+
+    .cell-entry.frozen { background: var(--alert-soft); }
+    .cell-entry.frozen .en-name { color: var(--alert); }
+    .cell-entry.moved { background: var(--gray-soft); opacity: 0.8; }
+    .cell-entry.moved .en-name { color: var(--gray); text-decoration: line-through; }
+    .cell-entry.virtual { background: var(--clay-soft); }
+    .cell-entry.virtual .en-name { color: var(--clay); }
+    .cell-entry.postponed { background: var(--gray-soft); opacity: 0.65; }
+
+    .attendance-actions {
+        display: flex;
+        gap: 5px;
+        margin-top: 5px;
+        align-items: center;
+    }
+
+    .btn-check, .btn-cross {
+        border: none;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        cursor: pointer;
+        line-height: 1;
+        transition: transform 0.08s;
+    }
+    .btn-check:hover, .btn-cross:hover { transform: scale(1.1); }
+    .btn-check { background: #455339; color: #fff; }
+    .btn-cross { background: #AE4F3D; color: #fff; }
+
+    .att-status {
+        display: block;
+        margin-top: 4px;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 2px 5px;
+        border-radius: 4px;
+        width: fit-content;
+    }
+    .att-status.completed { background: #D5E4CA; color: #2E4522; border: 1px solid #BACFB0; }
+    .att-status.missed { background: #F8D7DA; color: #842029; border: 1px solid #F5C2C7; }
+
+    .demo-inst-row {
+        padding: 5px 6px;
+        border-radius: 5px;
+        margin-bottom: 4px;
+        font-size: 11px;
+        line-height: 1.25;
+        font-weight: 600;
+    }
+    .demo-inst-row:last-child { margin-bottom: 0; }
+
+    .demo-row-avail {
+        background: #EDF3E8;
+        color: #38502E;
+        cursor: pointer;
+        border: 1px solid #D1E2C9;
+    }
+    .demo-row-avail:hover { background: #E1ECDB; }
+
+    .demo-row-locked {
+        background: #F8E7E5;
+        color: #933829;
+        border: 1px solid #F0CBC6;
+    }
+
+    .demo-row-booked {
+        background: var(--clay-soft);
+        color: var(--clay);
+        font-weight: 600;
+        border: 1px solid #E5CEBA;
+    }
+
+    .past-split-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .past-column-title {
+        font-family: 'Fraunces', serif;
+        font-size: 17px;
+        margin: 0 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--line);
+        color: var(--ink);
+    }
+
+    .schedule-slot {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+        background: var(--bg);
+    }
+
+    .schedule-slot-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .schedule-slot-row select, .schedule-slot-row input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 13.5px;
+        background: #fff;
+    }
+
+    .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(38, 37, 31, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s;
+        z-index: 10;
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+
+    .panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 440px;
+        max-width: 92vw;
+        background: var(--panel);
+        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.08);
+        transform: translateX(100%);
+        transition: transform .25s ease;
+        z-index: 11;
+        padding: 28px 24px;
+        overflow-y: auto;
+    }
+    .panel.open { transform: translateX(0); }
+    .panel h2 { font-family: 'Fraunces', serif; font-size: 22px; margin: 0 0 20px; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; }
+    .field input, .field select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        font-size: 14.5px;
+        background: var(--bg);
+    }
+
+    .panel-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .btn-primary {
+        flex: 1;
+        padding: 12px;
+        background: var(--sage);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        padding: 12px 16px;
+        background: transparent;
+        color: var(--ink-soft);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .action-menu-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+    }
+    .action-menu-btn:hover { background: var(--sage-soft); border-color: var(--sage); }
+
+    .empty { text-align: center; padding: 50px 20px; color: var(--ink-soft); }
+    .empty .big { font-family: 'Fraunces', serif; font-size: 18px; color: var(--ink); margin-bottom: 4px; }
+
+    @media (max-width: 768px) {
+        .past-split-wrap { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="wrap" id="appRoot">
+        <header class="top">
+            <div class="header-left">
+                <div>
+                    <p class="studio-name">Stüdyo Takip</p>
+                    <div class="header-links">
+                        <span class="role-switch" id="switchRoleLink">Yönetici Girişi</span>
+                        <span class="change-pass-link" id="openPassModalLink" style="display:none;">🔑 Şifre Değiştir</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stats" id="statsRow"></div>
+        </header>
+
+        <div class="toolbar" id="hocaToolbar" style="display:none;">
+            <button class="btn-add" id="hocaDemoAddBtn">+ Üye Ekle (Demo)</button>
+            <button class="btn-ghost" id="hocaDirectAddBtn">+ Direkt Üye Ekle</button>
+            <button class="btn-ghost" id="hocaFreezeBtn">Üye Dondur</button>
+        </div>
+
+        <div class="tabs" id="tabsRow"></div>
+
+        <!-- ÜYELER SEKME -->
+        <div class="view" id="view-members">
+            <div class="controls">
+                <input class="search" id="searchInput" placeholder="İsim veya telefon ile ara..."/>
+                <button class="filter-chip on" data-filter="all">Tümü</button>
+                <button class="filter-chip" data-filter="active">Aktif</button>
+                <button class="filter-chip" data-filter="low">Azalan (≤2)</button>
+                <button class="filter-chip" data-filter="done">Biten</button>
+                <button class="filter-chip" data-filter="multisport">MultiSport</button>
+                <button class="btn-ghost" id="openFreezeBtn">Üye Dondur</button>
+                <button class="btn-add" id="openAddBtn">+ Üye Ekle</button>
+            </div>
+            <div id="listArea"></div>
+        </div>
+
+        <!-- DERS PROGRAMI SEKME -->
+        <div class="view" id="view-schedule">
+            <div class="controls">
+                <div id="instructorTabs" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+            </div>
+            <div class="sched-table-wrap">
+                <table class="sched-table" id="schedTable"></table>
+            </div>
+            <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+                <button class="btn-add" id="endWeekBtn" style="background:var(--clay);font-size:15px;padding:12px 20px;">🏁 Bu Haftayı Bitir ve Kaydet</button>
+            </div>
+        </div>
+
+        <!-- DEMO PROGRAMI SEKME -->
+        <div class="view" id="view-demoSchedule">
+            <div class="sched-table-wrap">
+                <table class="sched-table" id="demoTable"></table>
+            </div>
+        </div>
+
+        <!-- GEÇMİŞ HAFTALAR & GEÇMİŞ AYLAR -->
+        <div class="view" id="view-pastWeeks">
+            <div class="past-split-wrap" id="pastSplitWrap">
+                <div id="pastWeeksColumn">
+                    <h3 class="past-column-title">📅 Geçmiş Hafta Kayıtları</h3>
+                    <div id="pastWeeksList"></div>
+                </div>
+                <div id="pastMonthsColumn">
+                    <h3 class="past-column-title">💰 Geçmiş Ay - Gelir / Gider</h3>
+                    <div id="pastMonthsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GELİR / GİDER SEKME (Sadece Yönetici) -->
+        <div class="view" id="view-finance">
+            <div class="controls" style="justify-content:space-between;">
+                <div class="field" style="max-width:200px;margin-bottom:0;">
+                    <label>Ay Seçin</label>
+                    <input type="month" id="finance-month"/>
+                </div>
+                <button class="btn-add" id="closeMonthBtn" style="background:var(--alert);">🔒 Bu Ayı Sıfırla ve Kaydet</button>
+            </div>
+            <div class="stats" id="financeStats" style="margin-bottom:20px;"></div>
+            <div id="financeTable"></div>
+        </div>
+
+        <!-- HATIRLATMALAR SEKME -->
+        <div class="view" id="view-reminders">
+            <div class="controls">
+                <div id="reminderDayButtons" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+            </div>
+            <div id="reminderList"></div>
+        </div>
+
+        <!-- HOCALAR SEKME (Sadece Yönetici) -->
+        <div class="view" id="view-instructorsMgmt">
+            <div class="controls">
+                <button class="btn-add" id="addInstructorBtn">+ Hoca Ekle</button>
+            </div>
+            <div id="instMgmtList"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ÜYE EKLE / DÜZENLE PANELİ -->
+    <div class="panel" id="panel">
+        <h2 id="panelTitle">Yeni Üye</h2>
+        <div class="field"><label>İsim Soyisim</label><input id="f-name" placeholder="Örn. Ayşe Yılmaz"/></div>
+        <div class="field"><label>Telefon</label><input id="f-phone" placeholder="0555 000 00 00"/></div>
+        <div class="field"><label>Paket Türü</label><select id="f-type"></select></div>
+        <div class="field" id="f-fee-wrap"><label id="f-fee-label">Ücret (₺)</label><input id="f-fee" type="number" min="0"/></div>
+        <div class="field"><label>Başlangıç Tarihi</label><input id="f-start" type="date"/></div>
+        <div class="field"><label>Kalan Seans</label><input id="f-remaining" type="number" min="0" max="24" placeholder="8"/></div>
+        <div class="field" id="f-schedule-section">
+            <label>Haftalık Ders Programı</label>
+            <div id="f-schedule-list"></div>
+            <button type="button" class="btn-ghost" id="addScheduleSlotBtn">+ Gün/Saat Ekle</button>
+        </div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="cancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="saveBtn">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- ÖDEME / YENİLEME PANELİ -->
+    <div class="panel" id="paymentPanel">
+        <h2>Yeni Paket Ekle</h2>
+        <p id="paymentForName" style="color:var(--ink-soft);font-size:14px;margin-bottom:18px;"></p>
+        <div class="field"><label>Paket Türü</label><select id="p-type"></select></div>
+        <div class="field" id="p-fee-wrap"><label>Tutar (₺)</label><input id="p-amount" type="number" min="0"/></div>
+        <div class="field"><label>Tarih</label><input id="p-date" type="date"/></div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="paymentCancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="paymentSaveBtn">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- ÜYE GEÇMİŞİ PANELİ -->
+    <div class="panel" id="historyPanel" style="width:460px;">
+        <h2 id="historyTitle">Üye Geçmişi</h2>
+        <div id="historyBody"></div>
+        <div class="panel-actions"><button class="btn-secondary" style="flex:1;" id="historyCloseBtn">Kapat</button></div>
+    </div>
+
+    <!-- GEÇMİŞ HAFTA DETAYI PANELİ -->
+    <div class="panel" id="weekDetailPanel" style="width:520px;">
+        <h2 id="weekDetailTitle">Hafta Detayı</h2>
+        <div id="weekDetailBody"></div>
+        <div class="panel-actions"><button class="btn-secondary" style="flex:1;" id="weekDetailCloseBtn">Kapat</button></div>
+    </div>
+
+    <!-- GEÇMİŞ AY DETAYI PANELİ -->
+    <div class="panel" id="monthDetailPanel" style="width:480px;">
+        <h2 id="monthDetailTitle">Geçmiş Ay Detayı</h2>
+        <div id="monthDetailBody"></div>
+        <div class="panel-actions"><button class="btn-secondary" style="flex:1;" id="monthDetailCloseBtn">Kapat</button></div>
+    </div>
+
+    <!-- DONDURMA PANELİ -->
+    <div class="panel" id="freezePanel">
+        <h2>Üye Dondur</h2>
+        <div class="field"><label>Üye Ara</label><input id="fr-search" placeholder="İsim ile ara..."/></div>
+        <div class="field"><label>Üye Seç</label><div class="member-check-list" id="fr-member-list" style="max-height:180px;overflow-y:auto;"></div></div>
+        <div class="field"><label>Şu tarihe kadar dondur</label><input id="fr-date" type="date"/></div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="freezeCancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="freezeSaveBtn">Dondur</button>
+        </div>
+        <button class="btn-ghost" id="freezeRemoveBtn" style="width:100%;margin-top:10px;display:none;">Dondurmayı Kaldır</button>
+    </div>
+
+    <!-- DEMO SEANS EKLEME PANELİ -->
+    <div class="panel" id="demoAddPanel">
+        <h2>Demo Seans Ekle</h2>
+        <div class="field"><label>İsim Soyisim</label><input id="d-name" placeholder="Örn. Ayşe Yılmaz"/></div>
+        <div class="field"><label>Telefon</label><input id="d-phone" placeholder="0555 000 00 00"/></div>
+        <div class="field"><label>Tarih</label><input id="d-date" type="date"/></div>
+        <div class="field"><label>Hoca</label><select id="d-instructor"></select></div>
+        <div class="field"><label>Saat</label><select id="d-time"></select></div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="demoCancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="demoSaveBtn">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- HÜCRE İŞLEM PANELİ -->
+    <div class="panel" id="entryActionPanel">
+        <h2 id="entryActionTitle">İşlem Seç</h2>
+        <p id="entryActionSub" style="color:var(--ink-soft);font-size:13px;margin-bottom:16px;"></p>
+        <div id="entryActionMenu">
+            <!-- AKTİFLEŞTİR (DONDURMAYI KALDIR) BUTONU -->
+            <button class="action-menu-btn" id="eaUnfreezeBtn" style="background:#EBF1E8;color:#38502E;border-color:#BACFB0;display:none;">☀️ Dondurmayı Kaldır (Aktifleştir)</button>
+            <button class="action-menu-btn" id="eaUndoBtn" style="background:#FFF3CD;color:#856404;border-color:#FFEEBA;">↩️ Yoklamayı Geri Al / Düzelt</button>
+            <button class="action-menu-btn" id="eaFreezeBtn">❄️ Dondur</button>
+            <button class="action-menu-btn" id="eaChangeBtn">🔁 Tek Seferlik Değişiklik</button>
+            <button class="action-menu-btn" id="eaPostponeBtn">⏸️ Erteleme Hakkını Kullan</button>
+        </div>
+        <div id="entryChangeForm" style="display:none;">
+            <div class="field"><label>Yeni Gün</label><select id="ea-new-day"></select></div>
+            <div class="field"><label>Yeni Saat</label><input id="ea-new-time" type="time"/></div>
+            <div class="field"><label>Yeni Hoca</label><select id="ea-new-instructor"></select></div>
+            <div class="panel-actions">
+                <button class="btn-secondary" id="eaChangeCancel">Vazgeç</button>
+                <button class="btn-primary" id="eaChangeConfirm">Onayla</button>
+            </div>
+        </div>
+        <div class="panel-actions" id="entryActionClose"><button class="btn-secondary" style="flex:1;" id="entryActionCloseBtn">Kapat</button></div>
+    </div>
+
+    <!-- SANAL İPTAL PANELİ -->
+    <div class="panel" id="virtualCancelPanel">
+        <h2 id="vcTitle">Tek Seferlik Değişiklik</h2>
+        <p id="vcSub" style="color:var(--ink-soft);font-size:13px;margin-bottom:16px;"></p>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="vcCloseBtn">Kapat</button>
+            <button class="btn-primary" id="vcCancelBtn" style="background:var(--alert);">Değişikliği İptal Et</button>
+        </div>
+    </div>
+
+    <!-- YÖNETİCİ GİRİŞ PANELİ -->
+    <div class="panel" id="adminLoginPanel">
+        <h2>Yönetici Girişi</h2>
+        <div class="field"><label>Şifre</label><input id="admin-pass" type="password" placeholder="Şifrenizi girin"/></div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="adminCancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="adminLoginBtn">Giriş Yap</button>
+        </div>
+    </div>
+
+    <!-- YÖNETİCİ ŞİFRE DEĞİŞTİRME PANELİ -->
+    <div class="panel" id="changePassPanel">
+        <h2>Yönetici Şifresini Değiştir</h2>
+        <div class="field"><label>Eski Şifre</label><input id="cp-old" type="password" placeholder="Mevcut şifreniz"/></div>
+        <div class="field"><label>Yeni Şifre</label><input id="cp-new" type="password" placeholder="Yeni şifreniz"/></div>
+        <div class="field"><label>Yeni Şifre (Tekrar)</label><input id="cp-confirm" type="password" placeholder="Yeni şifrenizi tekrar girin"/></div>
+        <div class="panel-actions">
+            <button class="btn-secondary" id="cpCancelBtn">Vazgeç</button>
+            <button class="btn-primary" id="cpSaveBtn">Şifreyi Güncelle</button>
+        </div>
+    </div>
+
+    <script>
+    const PACKAGES = [
+        { name: "8 Seans Grup Reformer - 4'lü Grup", price: 4600, capacity: 4, sessions: 8, group: 'grup' },
+        { name: "12 Seans Grup Reformer - 4'lü Grup", price: 6600, capacity: 4, sessions: 12, group: 'grup' },
+        { name: "8 Seans Grup Reformer - 3'lü Grup", price: 5000, capacity: 3, sessions: 8, group: 'grup3' },
+        { name: "8 Seans Düet Reformer - 2'li Grup", price: 5400, capacity: 2, sessions: 8, group: 'duet' },
+        { name: "8 Seans Bireysel", price: 6400, capacity: 1, sessions: 8, group: 'bireysel' },
+        { name: "12 Seans Bireysel", price: 9300, capacity: 1, sessions: 12, group: 'bireysel' },
+        { name: "8 Seans Hamile Pilates", price: 8000, capacity: 1, sessions: 8, group: 'hamile' },
+        { name: "12 Seans Hamile Pilates", price: 10000, capacity: 1, sessions: 12, group: 'hamile' },
+        { name: "MultiSport Grup Reformer", price: 4000, capacity: 4, sessions: 12, group: 'grup', isMulti: true }
+    ];
+
+    const PRICE_MAP = {};
+    const CAPACITY = {};
+    const SESSIONS_MAP = {};
+    PACKAGES.forEach(p => { 
+        PRICE_MAP[p.name] = p.price;
+        CAPACITY[p.name] = p.capacity;
+        SESSIONS_MAP[p.name] = p.sessions;
+    });
+
+    const DAY_ORDER = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+    const JS_DOW = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+
+    let role = 'hoca';
+    let members = [];
+    let instructors = [];
+    let demos = [];
+    let pastWeeks = [];
+    let pastMonths = [];
+    let lessonLog = [];
+    let extraRevenueLog = [];
+    let selectedReminderRefDay = null;
+    let reminderTargetDayName = null;
+    let editingId = null;
+    let paymentForId = null;
+    let selectedFreezeMemberId = null;
+    let currentFilter = 'all';
+    let searchTerm = '';
+    let currentInstructorFilter = 'all';
+    let currentTab = null;
+    let eaContext = null;
+    let vcContext = null;
+
+    const listArea = document.getElementById('listArea');
+    const overlay = document.getElementById('overlay');
+    const ALL_PANEL_IDS = ['panel', 'paymentPanel', 'freezePanel', 'demoAddPanel', 'entryActionPanel', 'virtualCancelPanel', 'adminLoginPanel', 'changePassPanel', 'historyPanel', 'weekDetailPanel', 'monthDetailPanel'];
+    const panels = ALL_PANEL_IDS.map(id => document.getElementById(id));
+
+    function uid(p) { return p + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000); }
+    function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function todayStr() { return fmtDate(new Date()); }
+    function fmtDate(d) {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function occDateInWindow(dayName, now) {
+        const targetDow = JS_DOW.indexOf(dayName);
+        const d = new Date(now);
+        d.setHours(0, 0, 0, 0);
+        const offset = (targetDow - d.getDay() + 7) % 7;
+        d.setDate(d.getDate() + offset);
+        return d;
+    }
+
+    function getInstructorName(id) {
+        const f = instructors.find(i => i.id === id);
+        return f ? f.name : '—';
+    }
+
+    function getPackageTotalSessions(typeName) {
+        return SESSIONS_MAP[typeName] || 8;
+    }
+
+    /* ---------- YEREL VERİ YÖNETİMİ ---------- */
+    function storageGet(k) { try { return localStorage.getItem('app_' + k); } catch (e) { return null; } }
+    function storageSet(k, v) { try { localStorage.setItem('app_' + k, v); } catch (e) {} }
+
+    function getAdminPassword() { return storageGet('admin_password') || 'admin'; }
+    function saveMembers() { storageSet('members', JSON.stringify(members)); }
+    function saveInstructors() { storageSet('instructors', JSON.stringify(instructors)); }
+    function saveDemos() { storageSet('demos', JSON.stringify(demos)); }
+    function savePastWeeks() { storageSet('pastWeeks', JSON.stringify(pastWeeks)); }
+    function savePastMonths() { storageSet('pastMonths', JSON.stringify(pastMonths)); }
+    function saveLessonLog() { storageSet('lessonLog', JSON.stringify(lessonLog)); }
+    function saveExtraRevenue() { storageSet('extraRevenue', JSON.stringify(extraRevenueLog)); }
+
+    function loadAll() {
+        try { members = JSON.parse(storageGet('members') || '[]'); } catch (e) { members = []; }
+        try { instructors = JSON.parse(storageGet('instructors') || '[]'); } catch (e) { instructors = []; }
+        try { demos = JSON.parse(storageGet('demos') || '[]'); } catch (e) { demos = []; }
+        try { pastWeeks = JSON.parse(storageGet('pastWeeks') || '[]'); } catch (e) { pastWeeks = []; }
+        try { pastMonths = JSON.parse(storageGet('pastMonths') || '[]'); } catch (e) { pastMonths = []; }
+        try { lessonLog = JSON.parse(storageGet('lessonLog') || '[]'); } catch (e) { lessonLog = []; }
+        try { extraRevenueLog = JSON.parse(storageGet('extraRevenue') || '[]'); } catch (e) { extraRevenueLog = []; }
+
+        members.forEach(m => {
+            if (!m.schedule) m.schedule = [];
+            if (!m.payments) m.payments = [];
+            if (m.missedCount == null) m.missedCount = 0;
+            if (!m.totalSessions) m.totalSessions = getPackageTotalSessions(m.type);
+            m.schedule.forEach(s => {
+                if (!s.attendance) s.attendance = {};
+            });
+        });
+
+        if (!instructors.length) {
+            instructors = [
+                { id: uid('i'), name: 'Hoca 1', primPercent: 30 },
+                { id: uid('i'), name: 'Hoca 2', primPercent: 30 }
+            ];
+            saveInstructors();
+        }
+
+        renderCurrentView();
+    }
+
+    /* ---------- ROL VE GİRİŞ ---------- */
+    function initRole() {
+        role = localStorage.getItem('app_role') || 'hoca';
+        showApp();
+    }
+
+    function setRole(r) {
+        role = r;
+        localStorage.setItem('app_role', r);
+        showApp();
+    }
+
+    document.getElementById('switchRoleLink').addEventListener('click', () => {
+        if (role === 'sahibi') {
+            if (confirm('Eğitmen ekranına dönmek istiyor musunuz?')) setRole('hoca');
+        } else {
+            document.getElementById('admin-pass').value = '';
+            openPanel('adminLoginPanel');
+        }
+    });
+
+    document.getElementById('adminCancelBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('adminLoginBtn').addEventListener('click', () => {
+        const pass = document.getElementById('admin-pass').value;
+        if (pass === getAdminPassword()) {
+            closeAllPanels();
+            setRole('sahibi');
+        } else {
+            alert('Hatalı şifre.');
+        }
+    });
+
+    document.getElementById('openPassModalLink').addEventListener('click', () => {
+        document.getElementById('cp-old').value = '';
+        document.getElementById('cp-new').value = '';
+        document.getElementById('cp-confirm').value = '';
+        openPanel('changePassPanel');
+    });
+
+    document.getElementById('cpCancelBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('cpSaveBtn').addEventListener('click', () => {
+        const oldP = document.getElementById('cp-old').value;
+        const newP = document.getElementById('cp-new').value;
+        const confP = document.getElementById('cp-confirm').value;
+
+        if (oldP !== getAdminPassword()) return alert('Mevcut eski şifreniz hatalı.');
+        if (!newP) return alert('Yeni şifre boş bırakılamaz.');
+        if (newP !== confP) return alert('Yeni şifreler eşleşmiyor!');
+
+        storageSet('admin_password', newP);
+        alert('Yönetici şifreniz başarıyla güncellendi!');
+        closeAllPanels();
+    });
+
+    function showApp() {
+        const isOwner = role === 'sahibi';
+        document.getElementById('switchRoleLink').textContent = isOwner ? 'Eğitmen Ekranına Dön' : 'Yönetici Girişi';
+        document.getElementById('openPassModalLink').style.display = isOwner ? 'inline-block' : 'none';
+        document.getElementById('hocaToolbar').style.display = !isOwner ? 'flex' : 'none';
+        
+        document.getElementById('f-fee-wrap').style.display = isOwner ? 'block' : 'none';
+        document.getElementById('p-fee-wrap').style.display = isOwner ? 'block' : 'none';
+
+        buildTabs();
+        loadAll();
+    }
+
+    function buildTabs() {
+        const tabs = role === 'hoca'
+            ? [
+                { id: 'schedule', label: 'Ders Programı' },
+                { id: 'demoSchedule', label: 'Demo Programı' },
+                { id: 'members', label: 'Üyeler' },
+                { id: 'pastWeeks', label: 'Geçmiş Haftalar' },
+                { id: 'reminders', label: 'Hatırlatmalar' }
+            ]
+            : [
+                { id: 'members', label: 'Üyeler' },
+                { id: 'schedule', label: 'Ders Programı' },
+                { id: 'demoSchedule', label: 'Demo Programı' },
+                { id: 'pastWeeks', label: 'Geçmiş Haftalar' },
+                { id: 'finance', label: 'Gelir/Gider' },
+                { id: 'reminders', label: 'Hatırlatmalar' },
+                { id: 'instructorsMgmt', label: 'Hocalar' }
+            ];
+
+        const wrap = document.getElementById('tabsRow');
+        wrap.innerHTML = tabs.map((t, i) => `<button class="tab-btn ${i === 0 ? 'on' : ''}" data-view="${t.id}">${t.label}</button>`).join('');
+        currentTab = tabs[0].id;
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+        document.getElementById('view-' + currentTab).classList.add('on');
+
+        wrap.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                wrap.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+                btn.classList.add('on');
+                currentTab = btn.dataset.view;
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+                document.getElementById('view-' + currentTab).classList.add('on');
+                renderCurrentView();
+            });
+        });
+    }
+
+    function renderCurrentView() {
+        renderStats();
+        renderInstructorTabs();
+        if (currentTab === 'members') render();
+        if (currentTab === 'schedule') renderScheduleGrid();
+        if (currentTab === 'demoSchedule') renderDemoGrid();
+        if (currentTab === 'pastWeeks') renderPastSplitView();
+        if (currentTab === 'instructorsMgmt' && role === 'sahibi') renderInstructorMgmt();
+        if (currentTab === 'finance' && role === 'sahibi') renderFinance();
+        if (currentTab === 'reminders') renderReminders();
+    }
+
+    function lessonPriceOf(m) {
+        if (m.type === "MultiSport Grup Reformer") {
+            return 500;
+        }
+        const total = m.totalSessions || getPackageTotalSessions(m.type);
+        const lastPayment = (m.payments || []).slice().reverse()[0];
+        const baseAmount = lastPayment ? Number(lastPayment.amount) : (PRICE_MAP[m.type] || 0);
+        return baseAmount > 0 ? (baseAmount / total) : 0;
+    }
+
+    function logLesson(m, instructorId, dateStr) {
+        if (!instructorId) return;
+        const amount = lessonPriceOf(m);
+        lessonLog.push({
+            id: uid('l'),
+            memberId: m.id,
+            memberName: m.name,
+            instructorId,
+            date: dateStr,
+            amount: amount,
+            type: m.type
+        });
+        saveLessonLog();
+    }
+
+    function statusOf(m) {
+        if (m.remaining <= 0) return 'done';
+        if (m.remaining <= 2) return 'low';
+        return 'active';
+    }
+
+    function renderStats() {
+        const wrap = document.getElementById('statsRow');
+        const total = members.length;
+        const active = members.filter(m => statusOf(m) === 'active').length;
+        const low = members.filter(m => statusOf(m) === 'low').length;
+        const frozen = members.filter(m => m.frozenUntil && todayStr() <= m.frozenUntil).length;
+
+        wrap.innerHTML = `
+            <div class="stat"><div class="num">${total}</div><div class="label">Toplam Üye</div></div>
+            <div class="stat"><div class="num">${active}</div><div class="label">Aktif Üye</div></div>
+            <div class="stat"><div class="num alert">${low}</div><div class="label">Azalan Paket</div></div>
+            <div class="stat"><div class="num alert">${frozen}</div><div class="label">Dondurulan</div></div>`;
+    }
+
+    /* ---------- 1. ÜYELER SEKME & FİLTRELEME ---------- */
+    function getMemberScheduleDetail(m) {
+        if (!m.schedule || !m.schedule.length) return '';
+        const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
+        return m.schedule.map(s => {
+            const hoca = getInstructorName(s.instructorId);
+            const gun = shortDays[s.day] || s.day;
+            return `${hoca} · ${gun} ${s.time}`;
+        }).join('  |  ');
+    }
+
+    function render() {
+        renderStats();
+        let filtered = members.filter(m => {
+            const matchesSearch = !searchTerm || m.name.toLowerCase().includes(searchTerm) || (m.phone || '').includes(searchTerm);
+            let matchesFilter = true;
+            if (currentFilter === 'active') matchesFilter = statusOf(m) === 'active';
+            else if (currentFilter === 'low') matchesFilter = m.remaining <= 2 && m.remaining > 0;
+            else if (currentFilter === 'done') matchesFilter = m.remaining <= 0;
+            else if (currentFilter === 'multisport') matchesFilter = m.type === "MultiSport Grup Reformer";
+            return matchesSearch && matchesFilter;
+        });
+
+        if (!members.length) {
+            listArea.innerHTML = '<div class="empty"><div class="big">Henüz üye yok</div>"+ Üye Ekle" ile başlayabilirsiniz.</div>';
+            return;
+        }
+
+        if (!filtered.length) {
+            listArea.innerHTML = '<div class="empty"><div class="big">Sonuç bulunamadı</div>Arama veya filtreyi değiştirin.</div>';
+            return;
+        }
+
+        const isOwner = role === 'sahibi';
+        let html = '<div class="list"><div class="row head"><div>Üye & Eğitmen / Saat</div><div>Paket</div><div>Kalan Seans (+ / -)</div><div>Durum</div><div></div></div>';
+        filtered.forEach(m => {
+            const st = statusOf(m);
+            const isFrozen = m.frozenUntil && todayStr() <= m.frozenUntil;
+            const schedDetail = getMemberScheduleDetail(m);
+            const totalPackSessions = m.totalSessions || getPackageTotalSessions(m.type);
+            const isMulti = m.type === "MultiSport Grup Reformer";
+
+            html += `
+                <div class="row">
+                  <div>
+                    <div class="m-name">${escapeHtml(m.name)}</div>
+                    <div class="m-phone">${escapeHtml(m.phone || '')}</div>
+                    ${schedDetail ? `<div class="m-sched-sub">${escapeHtml(schedDetail)}</div>` : ''}
+                  </div>
+                  <div class="m-pkg">${escapeHtml(m.type)}</div>
+                  <div class="sessions-wrap">
+                    <button class="btn-step" onclick="changeSession('${m.id}', -1)" title="Seans Düş">-</button>
+                    <span class="sessions ${st === 'low' || st === 'done' ? 'low' : ''}">${m.remaining} / ${totalPackSessions}</span>
+                    <button class="btn-step" onclick="changeSession('${m.id}', 1)" title="Seans Ekle">+</button>
+                    ${isMulti && isOwner ? `<button class="btn-multi-read" onclick="handleMultiOkut('${m.id}')" title="200 TL Kasaya Direkt Gelir Yazar">📱 Multi Okut</button>` : ''}
+                  </div>
+                  <div>
+                    <span class="badge ${st}">${st === 'active' ? 'Aktif' : st === 'low' ? 'Azalıyor' : 'Bitti'}</span>
+                    ${isFrozen ? `<div class="badge frozen" style="margin-top:4px;">Donduruldu</div>` : ''}
+                  </div>
+                  <div class="row-actions">
+                    <button class="icon-btn" onclick="openHistory('${m.id}')">Geçmiş</button>
+                    <button class="icon-btn" onclick="openPayment('${m.id}')">Yeni Paket</button>
+                    <button class="icon-btn" onclick="openEdit('${m.id}')">Düzenle</button>
+                    <button class="icon-btn danger" onclick="deleteMember('${m.id}')">Sil</button>
+                  </div>
+                </div>`;
+        });
+        html += '</div>';
+        listArea.innerHTML = html;
+    }
+
+    window.handleMultiOkut = function(memberId) {
+        const m = members.find(x => x.id === memberId);
+        if (!m) return;
+        if (m.remaining <= 0) return alert('Bu üyenin kalan seansı bulunmuyor.');
+
+        m.remaining -= 1;
+        extraRevenueLog.push({
+            id: uid('ex'),
+            memberId: m.id,
+            memberName: m.name,
+            amount: 200,
+            date: todayStr(),
+            note: 'MultiSport Ek Seans Okutma'
+        });
+
+        // Seansa girildiğinde dondurma kalkar
+        if (m.frozenUntil) delete m.frozenUntil;
+
+        saveExtraRevenue();
+        saveMembers();
+        alert(`${m.name} için 1 Multi seans okutuldu.\n200 TL doğrudan kasaya eklendi (Hakedişe girmez).\nKalan Seans: ${m.remaining}`);
+        render();
+        renderScheduleGrid();
+    };
+
+    window.changeSession = function(id, delta) {
+        const m = members.find(x => x.id === id);
+        if (!m) return;
+        if (delta < 0) {
+            if (m.remaining <= 0) return alert('Kalan seans zaten 0.');
+            m.remaining -= 1;
+            const firstInstId = m.schedule[0]?.instructorId || instructors[0]?.id;
+            logLesson(m, firstInstId, todayStr());
+            // Derse girildiği için donma kalkar
+            if (m.frozenUntil) delete m.frozenUntil;
+        } else {
+            m.remaining += 1;
+            if (m.frozenUntil) delete m.frozenUntil;
+        }
+        saveMembers();
+        render();
+        renderScheduleGrid();
+    };
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchTerm = e.target.value.toLowerCase().trim();
+        render();
+    });
+
+    document.querySelectorAll('#view-members .filter-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#view-members .filter-chip').forEach(b => b.classList.remove('on'));
+            btn.classList.add('on');
+            currentFilter = btn.dataset.filter;
+            render();
+        });
+    });
+
+    window.openHistory = function(id) {
+        const m = members.find(x => x.id === id);
+        if (!m) return;
+
+        const isOwner = role === 'sahibi';
+        const totalPayments = (m.payments || []).length;
+        const singlePackSessions = m.totalSessions || getPackageTotalSessions(m.type);
+        const totalPurchased = totalPayments * singlePackSessions || singlePackSessions;
+        const attended = Math.max(0, totalPurchased - m.remaining);
+
+        let paymentsHtml = '';
+        (m.payments || []).forEach(p => {
+            paymentsHtml += `
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;">
+                  <div><b>${p.date || '—'}</b> (${escapeHtml(p.type || m.type)})</div>
+                  ${isOwner ? `<div style="font-weight:600;">${Number(p.amount || 0).toLocaleString('tr-TR')}₺</div>` : ''}
+                </div>`;
+        });
+
+        document.getElementById('historyTitle').textContent = m.name;
+        document.getElementById('historyBody').innerHTML = `
+            <div style="display:flex;gap:12px;margin-bottom:18px;">
+              <div style="flex:1;">
+                <label style="font-size:12px;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:4px;">Aktif Ders Türü</label>
+                <select id="hist-change-type" onchange="updateMemberType('${m.id}', this.value)" style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--line);background:var(--bg);">
+                  ${PACKAGES.map(p => `<option value="${p.name}" ${p.name === m.type ? 'selected' : ''}>${p.name}</option>`).join('')}
+                </select>
+              </div>
+              <div style="background:var(--sage-soft);border:1px solid var(--sage);border-radius:8px;padding:8px 18px;text-align:center;">
+                <span style="font-size:11px;color:var(--sage-dark);font-weight:600;display:block;">KALAN SEANS</span>
+                <span style="font-size:22px;font-weight:700;color:var(--sage-dark);">${m.remaining}</span>
+              </div>
+            </div>
+
+            <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:16px 0 8px;">Kayıt / Yenileme Geçmişi</h4>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;margin-bottom:18px;">
+              ${paymentsHtml || '<div style="padding:10px;text-align:center;color:var(--ink-soft);">Kayıt bulunamadı.</div>'}
+            </div>
+
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
+                <span style="font-size:11px;color:var(--ink-soft);display:block;">TOPLAM ALINAN SEANS</span>
+                <b style="font-size:17px;">${totalPurchased}</b>
+              </div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
+                <span style="font-size:11px;color:var(--ink-soft);display:block;">GELDİĞİ SEANS</span>
+                <b style="font-size:17px;color:var(--sage);">${attended}</b>
+              </div>
+            </div>`;
+        openPanel('historyPanel');
+    };
+
+    window.updateMemberType = function(memberId, newType) {
+        const m = members.find(x => x.id === memberId);
+        if (!m) return;
+        m.type = newType;
+        m.totalSessions = getPackageTotalSessions(newType);
+        saveMembers();
+        render();
+        renderScheduleGrid();
+    };
+
+    document.getElementById('historyCloseBtn').addEventListener('click', closeAllPanels);
+
+    function deleteMember(id) {
+        if (!confirm('Bu üyeyi silmek istediğinize emin misiniz?')) return;
+        members = members.filter(x => x.id !== id);
+        saveMembers();
+        render();
+        renderScheduleGrid();
+    }
+
+    /* ---------- 2. DERS PROGRAMI & KONTENJAN ---------- */
+    function getAllTimeSlots() {
+        let base = [];
+        for (let h = 9; h <= 22; h++) base.push(String(h).padStart(2, '0') + ':00');
+        return base;
+    }
+
+    function renderInstructorTabs() {
+        const wrap = document.getElementById('instructorTabs');
+        let html = `<button class="filter-chip ${currentInstructorFilter === 'all' ? 'on' : ''}" data-inst="all">Tümü</button>`;
+        instructors.forEach(inst => {
+            html += `<button class="filter-chip ${currentInstructorFilter === inst.id ? 'on' : ''}" data-inst="${inst.id}">${escapeHtml(inst.name)}</button>`;
+        });
+        wrap.innerHTML = html;
+        wrap.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                wrap.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('on'));
+                btn.classList.add('on');
+                currentInstructorFilter = btn.dataset.inst;
+                renderScheduleGrid();
+            });
+        });
+    }
+
+    function renderScheduleGrid() {
+        const now = new Date();
+        const times = getAllTimeSlots();
+        const table = document.getElementById('schedTable');
+        let cellEntries = {};
+        function key(d, t) { return d + '|' + t; }
+
+        members.forEach(m => {
+            (m.schedule || []).forEach(slot => {
+                const occDate = fmtDate(occDateInWindow(slot.day, now));
+                const isMoved = slot.override && slot.override.active && slot.override.forOccDate === occDate;
+                const isPostponed = slot.postponedOccDate === occDate;
+                const isFrozen = m.frozenUntil && todayStr() <= m.frozenUntil;
+
+                if (currentInstructorFilter === 'all' || slot.instructorId === currentInstructorFilter) {
+                    const k = key(slot.day, slot.time);
+                    if (!cellEntries[k]) cellEntries[k] = [];
+                    cellEntries[k].push({
+                        memberId: m.id, memberName: m.name, type: m.type, instructorId: slot.instructorId,
+                        slotId: slot.id, occDate: occDate, frozen: isFrozen, moved: isMoved,
+                        postponed: isPostponed, attendance: (slot.attendance || {})[occDate] || null,
+                        showActions: !isMoved && !isPostponed && !isFrozen
+                    });
+                }
+
+                if (isMoved) {
+                    const virtInstId = slot.override.instructorId || slot.instructorId;
+                    if (currentInstructorFilter === 'all' || virtInstId === currentInstructorFilter) {
+                        const k = key(slot.override.day, slot.override.time);
+                        if (!cellEntries[k]) cellEntries[k] = [];
+                        cellEntries[k].push({
+                            memberId: m.id, memberName: m.name, type: m.type, instructorId: virtInstId,
+                            slotId: slot.id, occDate: occDate, frozen: isFrozen, virtual: true,
+                            attendance: (slot.attendance || {})[occDate] || null,
+                            showActions: true
+                        });
+                    }
+                }
+            });
+        });
+
+        let thead = '<thead><tr><th>Saat</th>' + DAY_ORDER.map(d => `<th>${d}</th>`).join('') + '</tr></thead>';
+        let tbody = '<tbody>';
+
+        times.forEach(t => {
+            tbody += `<tr><td class="time-cell">${t}</td>`;
+            DAY_ORDER.forEach(day => {
+                const entries = cellEntries[key(day, t)] || [];
+                tbody += `<td class="slot-cell">`;
+
+                if (entries.length > 0) {
+                    let grouped = {};
+                    entries.forEach(e => {
+                        if (!grouped[e.instructorId]) grouped[e.instructorId] = [];
+                        grouped[e.instructorId].push(e);
+                    });
+
+                    Object.keys(grouped).forEach(instId => {
+                        const instName = getInstructorName(instId);
+                        const instStudents = grouped[instId];
+
+                        tbody += `<div class="inst-group-box">`;
+                        tbody += `<div class="inst-group-title">${escapeHtml(instName)}</div>`;
+
+                        instStudents.forEach(e => {
+                            let cls = '';
+                            let tag = '';
+
+                            if (e.moved) {
+                                cls = 'moved';
+                                tag = ' (Ders Değişikliği)';
+                            } else if (e.virtual) {
+                                cls = 'virtual';
+                                tag = ' (Taşındı)';
+                            } else if (e.postponed) {
+                                cls = 'postponed';
+                                tag = ' (Ertelendi)';
+                            } else if (e.frozen) {
+                                cls = 'frozen';
+                                tag = ' (Donduruldu)';
+                            }
+
+                            tbody += `<div class="cell-entry ${cls}" data-member-id="${e.memberId}" data-slot-id="${e.slotId}" data-occ-date="${e.occDate}" data-virtual="${e.virtual ? '1' : '0'}">
+                                        <div class="en-name">${escapeHtml(e.memberName)}${tag}</div>
+                                        <div class="en-meta">${escapeHtml(e.type)}</div>`;
+
+                            if (e.attendance === 'completed') {
+                                tbody += `<span class="att-status completed">✓ Seans Yapıldı</span>`;
+                            } else if (e.attendance === 'missed') {
+                                tbody += `<span class="att-status missed">✗ Ders Yapılmadı / Gelmedi</span>`;
+                            } else if (e.showActions) {
+                                tbody += `
+                                    <div class="attendance-actions">
+                                        <button class="btn-check" onclick="handleAttendance(event, '${e.memberId}', '${e.slotId}', '${e.occDate}', true)" title="Seans Yapıldı">✓</button>
+                                        <button class="btn-cross" onclick="handleAttendance(event, '${e.memberId}', '${e.slotId}', '${e.occDate}', false)" title="Derse Gelmedi">✗</button>
+                                    </div>`;
+                            }
+
+                            tbody += `</div>`;
+                        });
+
+                        tbody += `</div>`;
+                    });
+                }
+
+                tbody += `</td>`;
+            });
+            tbody += `</tr>`;
+        });
+        tbody += '</tbody>';
+        table.innerHTML = thead + tbody;
+    }
+
+    window.handleAttendance = function(event, memberId, slotId, occDate, isCompleted) {
+        event.stopPropagation();
+        const m = members.find(x => x.id === memberId);
+        if (!m) return;
+        const slot = (m.schedule || []).find(s => s.id === slotId);
+        if (!slot) return;
+        if (!slot.attendance) slot.attendance = {};
+
+        // Seansa girildiğinde donma durumu varsa otomatik kaldırılır!
+        if (m.frozenUntil) {
+            delete m.frozenUntil;
+        }
+
+        if (isCompleted) {
+            if (m.remaining > 0) {
+                m.remaining -= 1;
+                logLesson(m, slot.override?.active ? (slot.override.instructorId || slot.instructorId) : slot.instructorId, occDate);
+            }
+            slot.attendance[occDate] = 'completed';
+        } else {
+            m.missedCount = (m.missedCount || 0) + 1;
+            slot.attendance[occDate] = 'missed';
+
+            if (m.missedCount <= 2) {
+                alert(`${m.name} gelmedi. Kalan gelmeme hakkı: ${2 - m.missedCount}`);
+            } else {
+                if (m.remaining > 0) {
+                    m.remaining -= 1;
+                    logLesson(m, slot.override?.active ? (slot.override.instructorId || slot.instructorId) : slot.instructorId, occDate);
+                }
+                alert(`${m.name} 2 gelmeme hakkını aştı! Seansı 1 adet düşüldü.`);
+            }
+        }
+
+        saveMembers();
+        renderScheduleGrid();
+        render();
+    };
+
+    document.getElementById('endWeekBtn').addEventListener('click', () => {
+        const now = new Date();
+        const weekName = `${now.getDate()} ${now.toLocaleString('tr-TR', { month: 'long' })} ${now.getFullYear()} Haftası`;
+        if (!confirm(`"${weekName}" programını Geçmiş Haftalar'a kaydetmek istiyor musunuz?`)) return;
+
+        let packageTypeCounts = {};
+        PACKAGES.forEach(p => { packageTypeCounts[p.name] = 0; });
+
+        members.forEach(m => {
+            (m.schedule || []).forEach(slot => {
+                const occDate = fmtDate(occDateInWindow(slot.day, now));
+                const att = (slot.attendance || {})[occDate];
+                if (att === 'completed') {
+                    packageTypeCounts[m.type] = (packageTypeCounts[m.type] || 0) + 1;
+                }
+            });
+        });
+
+        const tableHtml = document.getElementById('schedTable').innerHTML;
+
+        pastWeeks.push({
+            id: uid('pw'),
+            name: weekName,
+            date: todayStr(),
+            tableHtml: tableHtml,
+            packageCounts: packageTypeCounts
+        });
+
+        members.forEach(m => {
+            (m.schedule || []).forEach(slot => {
+                slot.attendance = {};
+                if (slot.override) delete slot.override;
+                if (slot.postponedOccDate) delete slot.postponedOccDate;
+            });
+        });
+
+        savePastWeeks();
+        saveMembers();
+        alert(`Hafta başarıyla kapatıldı ve Geçmiş Haftalar sekmesine kaydedildi!`);
+        renderCurrentView();
+    });
+
+    /* ---------- GEÇMİŞ HAFTALAR & GEÇMİŞ AYLAR (EĞİTMENDE CİRO GİZLİ) ---------- */
+    function renderPastSplitView() {
+        const isOwner = role === 'sahibi';
+        const pastMonthsCol = document.getElementById('pastMonthsColumn');
+        const splitWrap = document.getElementById('pastSplitWrap');
+
+        if (pastMonthsCol) {
+            pastMonthsCol.style.display = isOwner ? 'block' : 'none';
+        }
+        if (splitWrap) {
+            splitWrap.style.gridTemplateColumns = isOwner ? '1fr 1fr' : '1fr';
+        }
+
+        const weekWrap = document.getElementById('pastWeeksList');
+        if (!pastWeeks.length) {
+            weekWrap.innerHTML = '<div class="empty"><div class="big">Kayıtlı hafta yok</div>"Bu Haftayı Bitir" butonu ile kaydedebilirsiniz.</div>';
+        } else {
+            let html = '<div class="list">';
+            pastWeeks.slice().reverse().forEach(pw => {
+                html += `
+                    <div class="row" style="grid-template-columns:1.5fr 1fr auto;">
+                      <div class="m-name">${escapeHtml(pw.name)}</div>
+                      <div>${pw.date}</div>
+                      <div class="row-actions">
+                        <button class="btn-add" onclick="openWeekDetail('${pw.id}')">Detay</button>
+                        <button class="icon-btn danger" onclick="deletePastWeek('${pw.id}')">Sil</button>
+                      </div>
+                    </div>`;
+            });
+            html += '</div>';
+            weekWrap.innerHTML = html;
+        }
+
+        // SADECE YÖNETİCİDE GEÇMİŞ AY VE CİROLAR RENDER EDİLİR
+        if (isOwner) {
+            const monthWrap = document.getElementById('pastMonthsList');
+            if (!pastMonths.length) {
+                monthWrap.innerHTML = '<div class="empty"><div class="big">Kayıtlı ay yok</div>Gelir/Gider bölümünden "Bu Ayı Sıfırla ve Kaydet" ile arşivleyebilirsiniz.</div>';
+            } else {
+                let html = '<div class="list">';
+                pastMonths.slice().reverse().forEach(pm => {
+                    html += `
+                        <div class="row" style="grid-template-columns:1.2fr 1fr 1fr auto;">
+                          <div>
+                            <div class="m-name">${escapeHtml(pm.monthName)}</div>
+                            <div style="font-size:11px;color:var(--ink-soft);">${pm.closeDate}</div>
+                          </div>
+                          <div style="font-size:12.5px;">Ciro: <b>${pm.totalRev.toLocaleString('tr-TR')}₺</b></div>
+                          <div style="font-size:12.5px;color:var(--alert);">Hakediş: <b>${pm.totalComm.toLocaleString('tr-TR')}₺</b></div>
+                          <div class="row-actions">
+                            <button class="btn-add" onclick="openMonthDetail('${pm.id}')">Detay</button>
+                            <button class="icon-btn danger" onclick="deletePastMonth('${pm.id}')">Sil</button>
+                          </div>
+                        </div>`;
+                });
+                html += '</div>';
+                monthWrap.innerHTML = html;
+            }
+        }
+    }
+
+    window.openWeekDetail = function(id) {
+        const pw = pastWeeks.find(x => x.id === id);
+        if (!pw) return;
+
+        let countsHtml = '';
+        Object.keys(pw.packageCounts || {}).forEach(typeName => {
+            const count = pw.packageCounts[typeName];
+            if (count > 0) {
+                countsHtml += `
+                    <div style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 16px;text-align:center;min-width:140px;">
+                      <span style="font-size:11.5px;color:var(--ink-soft);display:block;">${escapeHtml(typeName)}</span>
+                      <b style="font-size:18px;color:var(--sage-dark);">${count} Seans</b>
+                    </div>`;
+            }
+        });
+
+        document.getElementById('weekDetailTitle').textContent = pw.name;
+        document.getElementById('weekDetailBody').innerHTML = `
+            <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:0 0 10px;">Tamamlanan Seans Dağılımı</h4>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+              ${countsHtml || '<div style="color:var(--ink-soft);padding:6px;">Bu hafta tamamlanan seans kaydı yok.</div>'}
+            </div>
+            <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:0 0 10px;">Haftalık Tablo Görüntüsü</h4>
+            <div class="sched-table-wrap" style="max-height:380px;overflow-y:auto;">
+              <table class="sched-table">${pw.tableHtml}</table>
+            </div>`;
+        openPanel('weekDetailPanel');
+    };
+
+    window.openMonthDetail = function(id) {
+        if (role !== 'sahibi') return;
+        const pm = pastMonths.find(x => x.id === id);
+        if (!pm) return;
+
+        let instHtml = '';
+        (pm.instructorDetails || []).forEach(d => {
+            instHtml += `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;">
+                  <div><b>${escapeHtml(d.name)}</b> (%${d.prim})</div>
+                  <div>${d.count} Ders · ${d.rev.toLocaleString('tr-TR')}₺ Ciro</div>
+                  <div style="color:var(--alert);font-weight:700;">${d.comm.toLocaleString('tr-TR')}₺ Hakediş</div>
+                </div>`;
+        });
+
+        document.getElementById('monthDetailTitle').textContent = `${pm.monthName} Detayı`;
+        document.getElementById('monthDetailBody').innerHTML = `
+            <div style="display:flex;gap:10px;margin-bottom:18px;">
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
+                <span style="font-size:11px;color:var(--ink-soft);display:block;">DERS CİROSU</span>
+                <b style="font-size:17px;">${pm.totalRev.toLocaleString('tr-TR')}₺</b>
+              </div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
+                <span style="font-size:11px;color:var(--ink-soft);display:block;">HAKEDİŞLER</span>
+                <b style="font-size:17px;color:var(--alert);">${pm.totalComm.toLocaleString('tr-TR')}₺</b>
+              </div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
+                <span style="font-size:11px;color:var(--ink-soft);display:block;">NET KASA</span>
+                <b style="font-size:17px;color:var(--sage-dark);">${(pm.totalRev - pm.totalComm).toLocaleString('tr-TR')}₺</b>
+              </div>
+            </div>
+
+            <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:16px 0 8px;">Hoca Bazlı Hakedişler</h4>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;">
+              ${instHtml || '<div style="padding:10px;text-align:center;color:var(--ink-soft);">Kayıt bulunamadı.</div>'}
+            </div>`;
+        openPanel('monthDetailPanel');
+    };
+
+    document.getElementById('weekDetailCloseBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('monthDetailCloseBtn').addEventListener('click', closeAllPanels);
+
+    window.deletePastWeek = function(id) {
+        if (!confirm('Bu geçmiş haftayı silmek istiyor musunuz?')) return;
+        pastWeeks = pastWeeks.filter(x => x.id !== id);
+        savePastWeeks();
+        renderPastSplitView();
+    };
+
+    window.deletePastMonth = function(id) {
+        if (!confirm('Bu geçmiş ay kaydını silmek istiyor musunuz?')) return;
+        pastMonths = pastMonths.filter(x => x.id !== id);
+        savePastMonths();
+        renderPastSplitView();
+    };
+
+    /* ---------- 3. DEMO PROGRAMI ---------- */
+    function renderDemoGrid() {
+        const times = getAllTimeSlots();
+        const table = document.getElementById('demoTable');
+
+        let thead = '<thead><tr><th>Saat</th>' + DAY_ORDER.map(d => `<th>${d}</th>`).join('') + '</tr></thead>';
+        let tbody = '<tbody>';
+
+        times.forEach(t => {
+            tbody += `<tr><td class="time-cell">${t}</td>`;
+            DAY_ORDER.forEach(day => {
+                tbody += `<td class="slot-cell">`;
+
+                instructors.forEach(inst => {
+                    let occupants = [];
+                    members.forEach(m => {
+                        (m.schedule || []).forEach(s => {
+                            if (s.day === day && s.time === t && s.instructorId === inst.id) {
+                                occupants.push({ type: m.type, name: m.name });
+                            }
+                        });
+                    });
+
+                    const demo = demos.find(d => d.time === t && d.instructorId === inst.id && JS_DOW[new Date(d.date + 'T00:00:00').getDay()] === day);
+
+                    if (demo) {
+                        tbody += `<div class="demo-inst-row demo-row-booked">${escapeHtml(inst.name)}: Demo (${escapeHtml(demo.name)})</div>`;
+                    } else if (occupants.length > 0) {
+                        const firstType = occupants[0].type;
+                        const cap = CAPACITY[firstType] || 1;
+
+                        if (cap <= 2) {
+                            tbody += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: ${cap === 1 ? 'Bireysel' : 'Düet'} (Dolu)</div>`;
+                        } else {
+                            if (occupants.length >= cap) {
+                                tbody += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: Grup (${cap}/${cap} Dolu)</div>`;
+                            } else {
+                                tbody += `<div class="demo-inst-row demo-row-avail" onclick="openDemoAddModal('${day}', '${t}', '${inst.id}')">${escapeHtml(inst.name)}: Grup (${occupants.length}/${cap} - Müsait)</div>`;
+                            }
+                        }
+                    }
+                });
+
+                tbody += `</td>`;
+            });
+            tbody += `</tr>`;
+        });
+
+        tbody += '</tbody>';
+        table.innerHTML = thead + tbody;
+    }
+
+    window.openDemoAddModal = function(day, time, instructorId) {
+        document.getElementById('d-name').value = '';
+        document.getElementById('d-phone').value = '';
+        document.getElementById('d-date').value = fmtDate(occDateInWindow(day, new Date()));
+        document.getElementById('d-instructor').innerHTML = instructors.map(i => `<option value="${i.id}" ${i.id === instructorId ? 'selected' : ''}>${escapeHtml(i.name)}</option>`).join('');
+        document.getElementById('d-time').innerHTML = getAllTimeSlots().map(t => `<option value="${t}" ${t === time ? 'selected' : ''}>${t}</option>`).join('');
+        openPanel('demoAddPanel');
+    };
+
+    document.getElementById('demoCancelBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('demoSaveBtn').addEventListener('click', () => {
+        const name = document.getElementById('d-name').value.trim();
+        const phone = document.getElementById('d-phone').value.trim();
+        const date = document.getElementById('d-date').value;
+        const time = document.getElementById('d-time').value;
+        const instructorId = document.getElementById('d-instructor').value;
+
+        if (!name || !date || !time) return alert('Lütfen bilgileri doldurun.');
+        demos.push({ id: uid('d'), name, phone, date, time, instructorId });
+        saveDemos();
+        closeAllPanels();
+        renderDemoGrid();
+    });
+
+    document.getElementById('hocaDemoAddBtn').addEventListener('click', () => {
+        openDemoAddModal('Pazartesi', '10:00', instructors[0]?.id);
+    });
+
+    /* ---------- 4. GELİR / GİDER (YÖNETİCİ) ---------- */
+    function renderFinance() {
+        if (role !== 'sahibi') return;
+        const month = document.getElementById('finance-month').value || todayStr().slice(0, 7);
+        let lessonRev = 0, commTotal = 0;
+        let perInst = {};
+
+        lessonLog.forEach(l => {
+            if ((l.date || '').slice(0, 7) !== month) return;
+            lessonRev += l.amount;
+            if (!perInst[l.instructorId]) perInst[l.instructorId] = { rev: 0, comm: 0, count: 0 };
+            perInst[l.instructorId].rev += l.amount;
+            perInst[l.instructorId].count += 1;
+            const inst = instructors.find(i => i.id === l.instructorId);
+            const comm = l.amount * ((inst?.primPercent ?? 30) / 100);
+            perInst[l.instructorId].comm += comm;
+            commTotal += comm;
+        });
+
+        let multiRevenueMonth = 0;
+        extraRevenueLog.forEach(ex => {
+            if ((ex.date || '').slice(0, 7) === month) multiRevenueMonth += Number(ex.amount);
+        });
+
+        const totalKasa = (lessonRev + multiRevenueMonth) - commTotal;
+
+        document.getElementById('financeStats').innerHTML = `
+            <div class="stat"><div class="num clay">${(lessonRev + multiRevenueMonth).toLocaleString('tr-TR')}₺</div><div class="label">Toplam Gelir (Ciro + Multi)</div></div>
+            <div class="stat"><div class="num alert">${commTotal.toLocaleString('tr-TR')}₺</div><div class="label">Maaş Hakedişleri</div></div>
+            <div class="stat"><div class="num">${totalKasa.toLocaleString('tr-TR')}₺</div><div class="label">Kalan Net Kasa</div></div>`;
+
+        let html = `
+            <div class="list">
+              <div class="row head" style="grid-template-columns:1.5fr 1fr 1fr 1fr;">
+                <div>Hoca Adı (Prim Oranı)</div>
+                <div>Ders Cirosu (₺)</div>
+                <div>Ders Saati (Adet)</div>
+                <div>Maaş Hakedişi (₺)</div>
+              </div>`;
+
+        instructors.forEach(inst => {
+            const d = perInst[inst.id] || { rev: 0, comm: 0, count: 0 };
+            html += `
+                <div class="row" style="grid-template-columns:1.5fr 1fr 1fr 1fr;">
+                  <div class="m-name">${escapeHtml(inst.name)} (%${inst.primPercent ?? 30})</div>
+                  <div class="sessions">${d.rev.toLocaleString('tr-TR')}₺</div>
+                  <div class="sessions">${d.count} Ders</div>
+                  <div class="sessions" style="color:var(--alert);">${d.comm.toLocaleString('tr-TR')}₺</div>
+                </div>`;
+        });
+        html += '</div>';
+        document.getElementById('financeTable').innerHTML = html;
+    }
+
+    document.getElementById('finance-month').addEventListener('change', renderFinance);
+
+    document.getElementById('closeMonthBtn').addEventListener('click', () => {
+        const monthInput = document.getElementById('finance-month').value || todayStr().slice(0, 7);
+        const [y, m] = monthInput.split('-');
+        const monthDate = new Date(y, parseInt(m) - 1, 1);
+        const monthName = monthDate.toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+
+        if (!confirm(`"${monthName}" dönemini sıfırlayıp Geçmiş Aylar tablosuna kaydetmek istediğinize emin misiniz?`)) return;
+
+        let lessonRev = 0, commTotal = 0;
+        let perInst = {};
+
+        lessonLog.forEach(l => {
+            if ((l.date || '').slice(0, 7) !== monthInput) return;
+            lessonRev += l.amount;
+            if (!perInst[l.instructorId]) perInst[l.instructorId] = { rev: 0, comm: 0, count: 0 };
+            perInst[l.instructorId].rev += l.amount;
+            perInst[l.instructorId].count += 1;
+            const inst = instructors.find(i => i.id === l.instructorId);
+            const comm = l.amount * ((inst?.primPercent ?? 30) / 100);
+            perInst[l.instructorId].comm += comm;
+            commTotal += comm;
+        });
+
+        let multiRevenueMonth = 0;
+        extraRevenueLog.forEach(ex => {
+            if ((ex.date || '').slice(0, 7) === monthInput) multiRevenueMonth += Number(ex.amount);
+        });
+
+        const instructorDetails = instructors.map(inst => {
+            const d = perInst[inst.id] || { rev: 0, comm: 0, count: 0 };
+            return {
+                name: inst.name,
+                prim: inst.primPercent ?? 30,
+                rev: d.rev,
+                count: d.count,
+                comm: d.comm
+            };
+        });
+
+        pastMonths.push({
+            id: uid('pm'),
+            monthKey: monthInput,
+            monthName: monthName,
+            closeDate: todayStr(),
+            totalRev: lessonRev + multiRevenueMonth,
+            totalComm: commTotal,
+            instructorDetails: instructorDetails
+        });
+
+        lessonLog = lessonLog.filter(l => (l.date || '').slice(0, 7) !== monthInput);
+        extraRevenueLog = extraRevenueLog.filter(ex => (ex.date || '').slice(0, 7) !== monthInput);
+
+        savePastMonths();
+        saveLessonLog();
+        saveExtraRevenue();
+
+        alert(`"${monthName}" dönemi başarıyla arşivlendi!`);
+        renderFinance();
+        renderPastSplitView();
+    });
+
+    /* ---------- 5. HOCA YÖNETİMİ ---------- */
+    function renderInstructorMgmt() {
+        const wrap = document.getElementById('instMgmtList');
+        wrap.innerHTML = instructors.map(inst => `
+            <div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);">
+              <input value="${escapeHtml(inst.name)}" id="inst-name-${inst.id}" style="flex:1;padding:8px;border:1px solid var(--line);border-radius:6px;"/>
+              <input type="number" value="${inst.primPercent ?? 30}" id="inst-prim-${inst.id}" style="width:80px;padding:8px;border:1px solid var(--line);border-radius:6px;" title="Prim %"/>
+              <button class="icon-btn" onclick="updateInstructor('${inst.id}')">Kaydet</button>
+              <button class="icon-btn danger" onclick="removeInstructor('${inst.id}')">Sil</button>
+            </div>`).join('');
+    }
+
+    window.updateInstructor = function(id) {
+        const name = document.getElementById(`inst-name-${id}`).value.trim();
+        const prim = parseFloat(document.getElementById(`inst-prim-${id}`).value);
+        const inst = instructors.find(i => i.id === id);
+        if (inst && name) {
+            inst.name = name;
+            inst.primPercent = isNaN(prim) ? 30 : prim;
+            saveInstructors();
+            renderInstructorMgmt();
+            renderScheduleGrid();
+            render();
+        }
+    };
+
+    window.removeInstructor = function(id) {
+        if (!confirm('Hocayı silmek istiyor musunuz?')) return;
+        instructors = instructors.filter(i => i.id !== id);
+        saveInstructors();
+        renderInstructorMgmt();
+        renderScheduleGrid();
+        render();
+    };
+
+    document.getElementById('addInstructorBtn').addEventListener('click', () => {
+        const name = prompt('Yeni Hoca Adı:');
+        if (!name || !name.trim()) return;
+        instructors.push({ id: uid('i'), name: name.trim(), primPercent: 30 });
+        saveInstructors();
+        renderInstructorMgmt();
+    });
+
+    /* ---------- HATIRLATMALAR ---------- */
+    function renderReminders() {
+        const wrap = document.getElementById('reminderDayButtons');
+        wrap.innerHTML = DAY_ORDER.map(d => `<button class="filter-chip ${selectedReminderRefDay === d ? 'on' : ''}" onclick="selectReminderDay('${d}')">${d}</button>`).join('');
+    }
+
+    window.selectReminderDay = function(d) {
+        selectedReminderRefDay = d;
+        const idx = DAY_ORDER.indexOf(d);
+        reminderTargetDayName = DAY_ORDER[(idx + 1) % DAY_ORDER.length];
+        const listWrap = document.getElementById('reminderList');
+
+        let list = [];
+        members.forEach(m => {
+            (m.schedule || []).forEach(slot => {
+                if (slot.day === reminderTargetDayName) {
+                    list.push({ member: m, time: slot.time });
+                }
+            });
+        });
+
+        if (!list.length) {
+            listWrap.innerHTML = '<div class="empty"><div class="big">Ders yok</div>Yarın için planlanmış ders bulunamadı.</div>';
+            return;
+        }
+
+        let html = '<div class="list">';
+        list.forEach(item => {
+            html += `<div class="row" style="grid-template-columns:1fr 1fr;">
+                    <div class="m-name">${escapeHtml(item.member.name)}</div>
+                    <div>${item.time}</div>
+                  </div>`;
+        });
+        html += '</div>';
+        listWrap.innerHTML = html;
+    };
+
+    /* ---------- DONDURMA İŞLEMLERİ ---------- */
+    function openFreezePanelFor(memberId) {
+        selectedFreezeMemberId = memberId || null;
+        document.getElementById('fr-search').value = '';
+        renderFreezeMemberList('');
+        openPanel('freezePanel');
+    }
+
+    function renderFreezeMemberList(filterText) {
+        const wrap = document.getElementById('fr-member-list');
+        const term = (filterText || '').toLowerCase();
+        const filtered = members.filter(m => !term || m.name.toLowerCase().includes(term));
+        wrap.innerHTML = filtered.map(m => `
+            <label style="display:flex;align-items:center;gap:8px;padding:6px;cursor:pointer;">
+              <input type="radio" name="fr-radio" value="${m.id}" ${selectedFreezeMemberId === m.id ? 'checked' : ''}/>
+              ${escapeHtml(m.name)}
+            </label>`).join('');
+
+        wrap.querySelectorAll('input').forEach(r => {
+            r.addEventListener('change', () => { selectedFreezeMemberId = r.value; });
+        });
+    }
+
+    document.getElementById('openFreezeBtn').addEventListener('click', () => openFreezePanelFor(null));
+    document.getElementById('hocaFreezeBtn').addEventListener('click', () => openFreezePanelFor(null));
+    document.getElementById('fr-search').addEventListener('input', (e) => renderFreezeMemberList(e.target.value));
+    document.getElementById('freezeCancelBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('freezeSaveBtn').addEventListener('click', () => {
+        if (!selectedFreezeMemberId) return alert('Üye seçin.');
+        const date = document.getElementById('fr-date').value;
+        if (!date) return alert('Tarih seçin.');
+        const m = members.find(x => x.id === selectedFreezeMemberId);
+        if (m) { m.frozenUntil = date; saveMembers(); }
+        closeAllPanels();
+        renderCurrentView();
+    });
+
+    /* ---------- KONTENJAN KONTROLÜ İLE ÜYE KAYDI ---------- */
+    function openFreshMemberPanel() {
+        editingId = null;
+        document.getElementById('panelTitle').textContent = 'Yeni Üye Ekle';
+        document.getElementById('f-type').innerHTML = PACKAGES.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+        document.getElementById('f-name').value = '';
+        document.getElementById('f-phone').value = '';
+        
+        const firstPack = PACKAGES[0];
+        document.getElementById('f-fee').value = firstPack.price || '';
+        document.getElementById('f-remaining').value = firstPack.sessions;
+        document.getElementById('f-start').value = todayStr();
+        document.getElementById('f-schedule-list').innerHTML = '';
+        addSlotRow();
+        openPanel('panel');
+    }
+
+    document.getElementById('f-type').addEventListener('change', (e) => {
+        const p = PACKAGES.find(x => x.name === e.target.value);
+        if (p) {
+            document.getElementById('f-fee').value = p.price || '';
+            document.getElementById('f-remaining').value = p.sessions;
+        }
+    });
+
+    document.getElementById('openAddBtn').addEventListener('click', openFreshMemberPanel);
+    document.getElementById('hocaDirectAddBtn').addEventListener('click', openFreshMemberPanel);
+
+    function addSlotRow(slot) {
+        slot = slot || { day: 'Pazartesi', time: '10:00', instructorId: instructors[0]?.id };
+        const wrap = document.createElement('div');
+        wrap.className = 'schedule-slot';
+        wrap.innerHTML = `
+            <div class="schedule-slot-row">
+              <select class="slot-day">${DAY_ORDER.map(d => `<option ${d === slot.day ? 'selected' : ''}>${d}</option>`).join('')}</select>
+              <input type="time" class="slot-time" value="${slot.time || '10:00'}"/>
+            </div>
+            <div class="schedule-slot-row">
+              <select class="slot-instructor">${instructors.map(i => `<option value="${i.id}" ${i.id === slot.instructorId ? 'selected' : ''}>${escapeHtml(i.name)}</option>`).join('')}</select>
+            </div>
+            <button type="button" class="icon-btn danger" onclick="this.parentElement.remove()" style="width:100%;">Programı Sil</button>`;
+        document.getElementById('f-schedule-list').appendChild(wrap);
+    }
+
+    document.getElementById('addScheduleSlotBtn').addEventListener('click', () => addSlotRow());
+
+    function checkCapacityLimit(day, time, instructorId, targetType, excludeMemberId = null) {
+        const targetCap = CAPACITY[targetType] || 1;
+        let existingMembers = [];
+
+        members.forEach(m => {
+            if (excludeMemberId && m.id === excludeMemberId) return;
+            (m.schedule || []).forEach(s => {
+                if (s.day === day && s.time === time && s.instructorId === instructorId) {
+                    existingMembers.push(m);
+                }
+            });
+        });
+
+        if (existingMembers.length >= targetCap) {
+            return false;
+        }
+        return true;
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        const name = document.getElementById('f-name').value.trim();
+        const phone = document.getElementById('f-phone').value.trim();
+        const type = document.getElementById('f-type').value;
+        const totalSessions = getPackageTotalSessions(type);
+        const remaining = parseInt(document.getElementById('f-remaining').value) || totalSessions;
+        const start = document.getElementById('f-start').value;
+        const fee = parseFloat(document.getElementById('f-fee').value) || 0;
+
+        if (!name) return alert('İsim girin.');
+
+        const slots = Array.from(document.querySelectorAll('#f-schedule-list .schedule-slot')).map(wrap => ({
+            id: uid('s'),
+            day: wrap.querySelector('.slot-day').value,
+            time: wrap.querySelector('.slot-time').value || '10:00',
+            instructorId: wrap.querySelector('.slot-instructor').value,
+            attendance: {}
+        }));
+
+        for (let slot of slots) {
+            if (!checkCapacityLimit(slot.day, slot.time, slot.instructorId, type, editingId)) {
+                const instName = getInstructorName(slot.instructorId);
+                const cap = CAPACITY[type] || 1;
+                alert(`Ders Programı Dolu!\n${instName} hocanın ${slot.day} saat ${slot.time} seansında ${cap} kişilik kontenjan doludur, daha fazla üye eklenemez.`);
+                return;
+            }
+        }
+
+        if (editingId) {
+            const m = members.find(x => x.id === editingId);
+            if (m) Object.assign(m, { name, phone, type, remaining, totalSessions, start, schedule: slots });
+        } else {
+            members.push({
+                id: uid('m'),
+                name, phone, type, remaining, totalSessions, start,
+                schedule: slots,
+                payments: fee > 0 ? [{ amount: fee, date: start || todayStr(), note: 'Kayıt', type: type }] : [],
+                missedCount: 0
+            });
+        }
+
+        saveMembers();
+        closeAllPanels();
+        renderCurrentView();
+    });
+
+    window.openEdit = function(id) {
+        const m = members.find(x => x.id === id);
+        if (!m) return;
+        editingId = id;
+        document.getElementById('panelTitle').textContent = 'Üyeyi Düzenle';
+        document.getElementById('f-type').innerHTML = PACKAGES.map(p => `<option value="${p.name}" ${p.name === m.type ? 'selected' : ''}>${p.name}</option>`).join('');
+        document.getElementById('f-name').value = m.name;
+        document.getElementById('f-phone').value = m.phone || '';
+        document.getElementById('f-remaining').value = m.remaining;
+        document.getElementById('f-start').value = m.start || '';
+        
+        if (role === 'sahibi') {
+            document.getElementById('f-fee-wrap').style.display = 'block';
+            const lastP = (m.payments || []).slice().reverse()[0];
+            document.getElementById('f-fee').value = lastP ? lastP.amount : (PRICE_MAP[m.type] || '');
+        } else {
+            document.getElementById('f-fee-wrap').style.display = 'none';
+        }
+
+        document.getElementById('f-schedule-list').innerHTML = '';
+        (m.schedule || []).forEach(s => addSlotRow(s));
+        openPanel('panel');
+    };
+
+    window.openPayment = function(id) {
+        paymentForId = id;
+        const m = members.find(x => x.id === id);
+        document.getElementById('paymentForName').textContent = m ? m.name : '';
+        document.getElementById('p-type').innerHTML = PACKAGES.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+        
+        const p = PACKAGES.find(x => x.name === (m?.type || PACKAGES[0].name));
+        document.getElementById('p-amount').value = p ? (p.price || '') : '';
+        document.getElementById('p-date').value = todayStr();
+        openPanel('paymentPanel');
+    };
+
+    document.getElementById('p-type').addEventListener('change', (e) => {
+        const p = PACKAGES.find(x => x.name === e.target.value);
+        if (p) document.getElementById('p-amount').value = p.price || '';
+    });
+
+    document.getElementById('paymentCancelBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('paymentSaveBtn').addEventListener('click', () => {
+        const m = members.find(x => x.id === paymentForId);
+        if (!m) return;
+        const amount = parseFloat(document.getElementById('p-amount').value) || 0;
+        const type = document.getElementById('p-type').value;
+        const addSessions = getPackageTotalSessions(type);
+
+        m.payments.push({ amount, date: document.getElementById('p-date').value, note: 'Paket Yenileme', type: type });
+        m.type = type;
+        m.totalSessions = addSessions;
+        m.remaining += addSessions;
+        m.missedCount = 0;
+
+        // KAYIT YENİLENDİĞİNDE DONDURMA OTOMATİK KALKAR
+        if (m.frozenUntil) {
+            delete m.frozenUntil;
+        }
+
+        saveMembers();
+        closeAllPanels();
+        renderCurrentView();
+    });
+
+    /* ---------- HÜCRE AKSİYONLARI & AKTİFLEŞTİRME ---------- */
+    document.getElementById('schedTable').addEventListener('click', (e) => {
+        const entry = e.target.closest('.cell-entry');
+        if (!entry) return;
+
+        const memberId = entry.dataset.memberId;
+        const slotId = entry.dataset.slotId;
+        const occDate = entry.dataset.occDate;
+        const isVirtual = entry.dataset.virtual === '1';
+
+        if (isVirtual) {
+            vcContext = { memberId, slotId };
+            openPanel('virtualCancelPanel');
+            return;
+        }
+
+        const m = members.find(x => x.id === memberId);
+        const slot = (m.schedule || []).find(s => s.id === slotId);
+        if (!slot) return;
+
+        eaContext = { memberId, slotId, occDate };
+        document.getElementById('entryActionTitle').textContent = m.name;
+        document.getElementById('entryActionSub').textContent = `${slot.day} ${slot.time} · ${getInstructorName(slot.instructorId)}`;
+        document.getElementById('entryActionMenu').style.display = 'block';
+        document.getElementById('entryChangeForm').style.display = 'none';
+
+        // ÜYE DONDURULMUŞ MU KONTROLÜ
+        const isFrozen = m.frozenUntil && todayStr() <= m.frozenUntil;
+        const unfreezeBtn = document.getElementById('eaUnfreezeBtn');
+        const freezeBtn = document.getElementById('eaFreezeBtn');
+
+        if (isFrozen) {
+            unfreezeBtn.style.display = 'block';
+            freezeBtn.style.display = 'none';
+        } else {
+            unfreezeBtn.style.display = 'none';
+            freezeBtn.style.display = 'block';
+        }
+
+        openPanel('entryActionPanel');
+    });
+
+    // DONDURMAYI KALDIR (AKTİFLEŞTİR)
+    document.getElementById('eaUnfreezeBtn').addEventListener('click', () => {
+        if (!eaContext) return;
+        const m = members.find(x => x.id === eaContext.memberId);
+        if (!m) return;
+
+        delete m.frozenUntil;
+        saveMembers();
+        alert(`${m.name} üyesinin dondurulması kaldırıldı ve başarıyla aktifleştirildi.`);
+        closeAllPanels();
+        renderScheduleGrid();
+        render();
+    });
+
+    document.getElementById('eaUndoBtn').addEventListener('click', () => {
+        if (!eaContext) return;
+        const m = members.find(x => x.id === eaContext.memberId);
+        const slot = (m.schedule || []).find(s => s.id === eaContext.slotId);
+        if (!m || !slot) return;
+
+        const currentAtt = (slot.attendance || {})[eaContext.occDate];
+        if (!currentAtt) return alert('Bu ders için henüz yapılmış bir yoklama yok.');
+
+        if (confirm(`${m.name} için yapılan yoklamayı geri almak istiyor musunuz?`)) {
+            if (currentAtt === 'completed') {
+                m.remaining += 1;
+                const idx = lessonLog.findLastIndex(l => l.memberId === m.id && l.date === eaContext.occDate);
+                if (idx !== -1) lessonLog.splice(idx, 1);
+                saveLessonLog();
+            } else if (currentAtt === 'missed') {
+                if (m.missedCount > 2) {
+                    m.remaining += 1;
+                    const idx = lessonLog.findLastIndex(l => l.memberId === m.id && l.date === eaContext.occDate);
+                    if (idx !== -1) lessonLog.splice(idx, 1);
+                    saveLessonLog();
+                }
+                m.missedCount = Math.max(0, m.missedCount - 1);
+            }
+
+            delete slot.attendance[eaContext.occDate];
+            saveMembers();
+            closeAllPanels();
+            renderScheduleGrid();
+            render();
+        }
+    });
+
+    document.getElementById('entryActionCloseBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('eaFreezeBtn').addEventListener('click', () => {
+        const ctx = eaContext;
+        closeAllPanels();
+        if (ctx) openFreezePanelFor(ctx.memberId);
+    });
+
+    document.getElementById('eaPostponeBtn').addEventListener('click', () => {
+        if (!eaContext) return;
+        const m = members.find(x => x.id === eaContext.memberId);
+        const slot = m && (m.schedule || []).find(s => s.id === eaContext.slotId);
+        if (!slot) return;
+
+        const occStr = fmtDate(occDateInWindow(slot.day, new Date()));
+        slot.postponedOccDate = occStr;
+        saveMembers();
+        closeAllPanels();
+        renderScheduleGrid();
+    });
+
+    document.getElementById('eaChangeBtn').addEventListener('click', () => {
+        document.getElementById('entryActionMenu').style.display = 'none';
+        document.getElementById('ea-new-day').innerHTML = DAY_ORDER.map(d => `<option>${d}</option>`).join('');
+        document.getElementById('ea-new-time').value = '10:00';
+        document.getElementById('ea-new-instructor').innerHTML = instructors.map(i => `<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
+        document.getElementById('entryChangeForm').style.display = 'block';
+    });
+
+    document.getElementById('eaChangeCancel').addEventListener('click', closeAllPanels);
+    document.getElementById('eaChangeConfirm').addEventListener('click', () => {
+        if (!eaContext) return;
+        const m = members.find(x => x.id === eaContext.memberId);
+        const slot = m && (m.schedule || []).find(s => s.id === eaContext.slotId);
+        if (!slot) return;
+
+        const newDay = document.getElementById('ea-new-day').value;
+        const newTime = document.getElementById('ea-new-time').value || '10:00';
+        const newInst = document.getElementById('ea-new-instructor').value;
+
+        if (!checkCapacityLimit(newDay, newTime, newInst, m.type, m.id)) {
+            alert(`Ders Programı Dolu!\nSeçtiğiniz günde bu hocanın kontenjanı doludur, ders taşınamaz.`);
+            return;
+        }
+
+        const occStr = fmtDate(occDateInWindow(slot.day, new Date()));
+        slot.override = {
+            active: true,
+            day: newDay,
+            time: newTime,
+            instructorId: newInst,
+            forOccDate: occStr
+        };
+
+        saveMembers();
+        closeAllPanels();
+        renderScheduleGrid();
+    });
+
+    document.getElementById('vcCloseBtn').addEventListener('click', closeAllPanels);
+    document.getElementById('vcCancelBtn').addEventListener('click', () => {
+        if (!vcContext) return;
+        const m = members.find(x => x.id === vcContext.memberId);
+        const slot = m && (m.schedule || []).find(s => s.id === vcContext.slotId);
+        if (slot && slot.override) delete slot.override;
+        saveMembers();
+        closeAllPanels();
+        renderScheduleGrid();
+    });
+
+    function openPanel(id) { overlay.classList.add('open'); document.getElementById(id).classList.add('open'); }
+    function closeAllPanels() { overlay.classList.remove('open'); panels.forEach(p => p.classList.remove('open')); }
+    overlay.addEventListener('click', closeAllPanels);
+    document.getElementById('cancelBtn').addEventListener('click', closeAllPanels);
+
+    initRole();
+    </script>
+</body>
+</html>
