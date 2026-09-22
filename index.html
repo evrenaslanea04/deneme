@@ -55,6 +55,17 @@
     }
 
     .header-left { display: flex; align-items: center; gap: 14px; }
+    
+    /* LOGO STİLİ */
+    .studio-logo {
+        height: 52px;
+        max-width: 250px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        margin-bottom: 4px;
+    }
+
     .studio-name {
         font-family: 'Fraunces', serif;
         font-weight: 600;
@@ -567,6 +578,10 @@
         margin-bottom: 14px;
         gap: 12px;
     }
+    body.is-mobile-view .studio-logo {
+        height: 42px;
+        max-width: 190px;
+    }
     body.is-mobile-view .studio-name {
         font-size: 22px;
     }
@@ -635,7 +650,7 @@
         text-align: center;
     }
 
-    /* Mobilde Ders Programı Akış Tasarımı (Sağa sola çekme derdine son) */
+    /* Mobilde Ders Programı Akış Tasarımı */
     .mobile-day-selector {
         display: none;
     }
@@ -677,7 +692,7 @@
         gap: 8px;
     }
     body.is-mobile-view .sched-table-wrap {
-        display: none; /* Mobilde yatay tablo yerine akış gösterilir */
+        display: none;
     }
     body.is-mobile-view .mob-time-slot {
         background: var(--panel);
@@ -710,7 +725,10 @@
         <header class="top">
             <div class="header-left">
                 <div>
-                    <p class="studio-name">Stüdyo Takip</p>
+                    <!-- YENİ YAZILI LOGO ALANI -->
+                    <img src="logo.png" alt="Stüdyo Logo" class="studio-logo" id="studioLogoImg" onerror="this.style.display='none'; document.getElementById('logoFallbackText').style.display='block';">
+                    <p class="studio-name" id="logoFallbackText" style="display:none;">Stüdyo Takip</p>
+
                     <div class="header-links">
                         <span class="role-switch" id="switchRoleLink">Yönetici Girişi</span>
                         <span class="device-toggle-link" id="toggleDeviceBtn" onclick="toggleDeviceMode()">📱 Mobil Görünüm</span>
@@ -1007,7 +1025,6 @@
     let eaContext = null;
     let vcContext = null;
 
-    // Cihaz ve Mobil Görünüm Değişkenleri
     let isMobileView = false;
     let selectedMobileScheduleDay = 'Pazartesi';
     let selectedMobileDemoDay = 'Pazartesi';
@@ -1042,19 +1059,16 @@
         return SESSIONS_MAP[typeName] || 8;
     }
 
-    /* ---------- CİHAZ AYRIMI & MOD DEĞİŞTİRME ---------- */
     function initDeviceDetection() {
         const savedMode = localStorage.getItem('app_device_mode');
         if (savedMode) {
             isMobileView = (savedMode === 'mobile');
         } else {
-            // Otomatik tespit: Ekran 768px veya altındaysa mobil aç
             isMobileView = window.innerWidth <= 768;
         }
         applyDeviceView();
 
-        // Bugünün gününü seçili yap
-        const todayIdx = new Date().getDay(); // 0 Pazar
+        const todayIdx = new Date().getDay();
         const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
         selectedMobileScheduleDay = dayNames[todayIdx];
         selectedMobileDemoDay = dayNames[todayIdx];
@@ -1078,7 +1092,6 @@
         }
     }
 
-    /* ---------- YEREL VERİ YÖNETİMİ ---------- */
     function storageGet(k) { try { return localStorage.getItem('app_' + k); } catch (e) { return null; } }
     function storageSet(k, v) { try { localStorage.setItem('app_' + k, v); } catch (e) {} }
 
@@ -1121,7 +1134,6 @@
         renderCurrentView();
     }
 
-    /* ---------- ROL VE GİRİŞ ---------- */
     function initRole() {
         role = localStorage.getItem('app_role') || 'hoca';
         showApp();
@@ -1282,7 +1294,6 @@
             <div class="stat"><div class="num alert">${frozen}</div><div class="label">Dondurulan</div></div>`;
     }
 
-    /* ---------- 1. ÜYELER SEKME & FİLTRELEME ---------- */
     function getMemberScheduleDetail(m) {
         if (!m.schedule || !m.schedule.length) return '';
         const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
@@ -1369,7 +1380,6 @@
             note: 'MultiSport Ek Seans Okutma'
         });
 
-        // Seansa girildiğinde dondurma kalkar
         if (m.frozenUntil) delete m.frozenUntil;
 
         saveExtraRevenue();
@@ -1387,7 +1397,6 @@
             m.remaining -= 1;
             const firstInstId = m.schedule[0]?.instructorId || instructors[0]?.id;
             logLesson(m, firstInstId, todayStr());
-            // Derse girildiği için donma kalkar
             if (m.frozenUntil) delete m.frozenUntil;
         } else {
             m.remaining += 1;
@@ -1484,7 +1493,6 @@
         renderScheduleGrid();
     }
 
-    /* ---------- 2. DERS PROGRAMI (MASAÜSTÜ & MOBİL AYRI) ---------- */
     function getAllTimeSlots() {
         let base = [];
         for (let h = 9; h <= 22; h++) base.push(String(h).padStart(2, '0') + ':00');
@@ -1548,7 +1556,7 @@
             });
         });
 
-        // 1. MASAÜSTÜ TABLOSU (Mevcut yapı hiç bozulmadı)
+        // 1. Masaüstü Tablosu
         const table = document.getElementById('schedTable');
         let thead = '<thead><tr><th>Saat</th>' + DAY_ORDER.map(d => `<th>${d}</th>`).join('') + '</tr></thead>';
         let tbody = '<tbody>';
@@ -1612,12 +1620,11 @@
         tbody += '</tbody>';
         table.innerHTML = thead + tbody;
 
-        // 2. MOBİL DERS PROGRAMI (GÜNLÜK AKIŞ - SAĞA SOLA ÇEKMEDEN)
+        // 2. Mobil Akış
         renderMobileScheduleView(cellEntries, times);
     }
 
     function renderMobileScheduleView(cellEntries, times) {
-        // Gün Seçici Şerit
         const daySelector = document.getElementById('mobileDaySelector');
         const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
         
@@ -1627,14 +1634,12 @@
             </button>
         `).join('');
 
-        // Seçilen Günün Saatlik Akışı
         const timeline = document.getElementById('mobileScheduleTimeline');
         let html = '';
 
         times.forEach(t => {
             const entries = (cellEntries[selectedMobileScheduleDay + '|' + t]) || [];
             
-            // Eğer saatte ders varsa dolu kart, yoksa boş saat
             if (entries.length > 0) {
                 html += `<div class="mob-time-slot">
                     <div class="mob-time-header">
@@ -1709,7 +1714,6 @@
         if (!slot) return;
         if (!slot.attendance) slot.attendance = {};
 
-        // Seansa girildiğinde donma durumu varsa otomatik kaldırılır!
         if (m.frozenUntil) {
             delete m.frozenUntil;
         }
@@ -1782,7 +1786,6 @@
         renderCurrentView();
     });
 
-    /* ---------- GEÇMİŞ HAFTALAR & GEÇMİŞ AYLAR (EĞİTMENDE CİRO GİZLİ) ---------- */
     function renderPastSplitView() {
         const isOwner = role === 'sahibi';
         const pastMonthsCol = document.getElementById('pastMonthsColumn');
@@ -1927,7 +1930,6 @@
         renderPastSplitView();
     };
 
-    /* ---------- 3. DEMO PROGRAMI (MASAÜSTÜ & MOBİL) ---------- */
     function renderDemoGrid() {
         const times = getAllTimeSlots();
         const table = document.getElementById('demoTable');
@@ -1978,7 +1980,6 @@
         tbody += '</tbody>';
         table.innerHTML = thead + tbody;
 
-        // Mobilde Demo Akışı
         renderMobileDemoView(times);
     }
 
@@ -2476,7 +2477,6 @@
         m.remaining += addSessions;
         m.missedCount = 0;
 
-        // KAYIT YENİLENDİĞİNDE DONDURMA OTOMATİK KALKAR
         if (m.frozenUntil) {
             delete m.frozenUntil;
         }
@@ -2515,7 +2515,6 @@
         document.getElementById('entryActionMenu').style.display = 'block';
         document.getElementById('entryChangeForm').style.display = 'none';
 
-        // ÜYE DONDURULMUŞ MU KONTROLÜ
         const isFrozen = m.frozenUntil && todayStr() <= m.frozenUntil;
         const unfreezeBtn = document.getElementById('eaUnfreezeBtn');
         const freezeBtn = document.getElementById('eaFreezeBtn');
@@ -2531,7 +2530,6 @@
         openPanel('entryActionPanel');
     }
 
-    // DONDURMAYI KALDIR (AKTİFLEŞTİR)
     document.getElementById('eaUnfreezeBtn').addEventListener('click', () => {
         if (!eaContext) return;
         const m = members.find(x => x.id === eaContext.memberId);
