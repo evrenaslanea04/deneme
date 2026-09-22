@@ -67,13 +67,18 @@
         gap: 12px;
         align-items: center;
         margin-top: 5px;
+        flex-wrap: wrap;
     }
 
-    .role-switch, .change-pass-link {
+    .role-switch, .change-pass-link, .device-toggle-link {
         font-size: 12px;
         color: var(--ink-soft);
         text-decoration: underline;
         cursor: pointer;
+    }
+    .device-toggle-link {
+        color: var(--clay);
+        font-weight: 600;
     }
 
     .stats { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -551,8 +556,151 @@
     .empty { text-align: center; padding: 50px 20px; color: var(--ink-soft); }
     .empty .big { font-family: 'Fraunces', serif; font-size: 18px; color: var(--ink); margin-bottom: 4px; }
 
-    @media (max-width: 768px) {
-        .past-split-wrap { grid-template-columns: 1fr; }
+    /* ======================================================== */
+    /* MOBİL GÖRÜNÜM ÖZEL STİLLERİ (Masaüstünü Asla Bozmaz)   */
+    /* ======================================================== */
+    body.is-mobile-view .wrap {
+        padding: 16px 14px 60px;
+    }
+    body.is-mobile-view header.top {
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+        gap: 12px;
+    }
+    body.is-mobile-view .studio-name {
+        font-size: 22px;
+    }
+    body.is-mobile-view .stats {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    body.is-mobile-view .stat {
+        padding: 8px 10px;
+        min-width: 0;
+    }
+    body.is-mobile-view .toolbar {
+        gap: 8px;
+    }
+    body.is-mobile-view .toolbar button {
+        flex: 1;
+        font-size: 12.5px;
+        padding: 8px 10px;
+        text-align: center;
+        white-space: nowrap;
+    }
+    body.is-mobile-view .controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    body.is-mobile-view .search {
+        width: 100%;
+    }
+
+    /* Mobilde Üyeler Kart Tasarımı */
+    body.is-mobile-view .row.head {
+        display: none;
+    }
+    body.is-mobile-view .row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    body.is-mobile-view .sessions-wrap {
+        justify-content: space-between;
+        background: var(--bg);
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+    body.is-mobile-view .btn-step {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+    body.is-mobile-view .row-actions {
+        justify-content: stretch;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 4px;
+    }
+    body.is-mobile-view .row-actions .icon-btn {
+        padding: 8px;
+        text-align: center;
+    }
+
+    /* Mobilde Ders Programı Akış Tasarımı (Sağa sola çekme derdine son) */
+    .mobile-day-selector {
+        display: none;
+    }
+    body.is-mobile-view .mobile-day-selector {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+        scrollbar-width: none;
+    }
+    body.is-mobile-view .mobile-day-selector::-webkit-scrollbar { display: none; }
+    body.is-mobile-view .btn-mob-day {
+        flex: 1;
+        min-width: 44px;
+        padding: 8px 4px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        text-align: center;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    body.is-mobile-view .btn-mob-day.active {
+        background: var(--sage);
+        color: #fff;
+        border-color: var(--sage-dark);
+    }
+
+    .mobile-schedule-timeline {
+        display: none;
+    }
+    body.is-mobile-view .mobile-schedule-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    body.is-mobile-view .sched-table-wrap {
+        display: none; /* Mobilde yatay tablo yerine akış gösterilir */
+    }
+    body.is-mobile-view .mob-time-slot {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    body.is-mobile-view .mob-time-header {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--sage-dark);
+        border-bottom: 1px dashed var(--line);
+        padding-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+    }
+    body.is-mobile-view .attendance-actions .btn-check,
+    body.is-mobile-view .attendance-actions .btn-cross {
+        padding: 8px 16px;
+        font-size: 14px;
     }
     </style>
 </head>
@@ -565,6 +713,7 @@
                     <p class="studio-name">Stüdyo Takip</p>
                     <div class="header-links">
                         <span class="role-switch" id="switchRoleLink">Yönetici Girişi</span>
+                        <span class="device-toggle-link" id="toggleDeviceBtn" onclick="toggleDeviceMode()">📱 Mobil Görünüm</span>
                         <span class="change-pass-link" id="openPassModalLink" style="display:none;">🔑 Şifre Değiştir</span>
                     </div>
                 </div>
@@ -584,13 +733,17 @@
         <div class="view" id="view-members">
             <div class="controls">
                 <input class="search" id="searchInput" placeholder="İsim veya telefon ile ara..."/>
-                <button class="filter-chip on" data-filter="all">Tümü</button>
-                <button class="filter-chip" data-filter="active">Aktif</button>
-                <button class="filter-chip" data-filter="low">Azalan (≤2)</button>
-                <button class="filter-chip" data-filter="done">Biten</button>
-                <button class="filter-chip" data-filter="multisport">MultiSport</button>
-                <button class="btn-ghost" id="openFreezeBtn">Üye Dondur</button>
-                <button class="btn-add" id="openAddBtn">+ Üye Ekle</button>
+                <div style="display:flex;gap:6px;overflow-x:auto;width:100%;scrollbar-width:none;">
+                    <button class="filter-chip on" data-filter="all">Tümü</button>
+                    <button class="filter-chip" data-filter="active">Aktif</button>
+                    <button class="filter-chip" data-filter="low">Azalan (≤2)</button>
+                    <button class="filter-chip" data-filter="done">Biten</button>
+                    <button class="filter-chip" data-filter="multisport">MultiSport</button>
+                </div>
+                <div style="display:flex;gap:8px;width:100%;">
+                    <button class="btn-ghost" id="openFreezeBtn" style="flex:1;">Üye Dondur</button>
+                    <button class="btn-add" id="openAddBtn" style="flex:1;">+ Üye Ekle</button>
+                </div>
             </div>
             <div id="listArea"></div>
         </div>
@@ -600,16 +753,28 @@
             <div class="controls">
                 <div id="instructorTabs" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
             </div>
+
+            <!-- MOBİL İÇİN GÜN SEÇİCİ ŞERİT -->
+            <div class="mobile-day-selector" id="mobileDaySelector"></div>
+            <!-- MOBİL İÇİN DİKEY ZAMAN AKIŞI (SAĞA SOLA ÇEKMEDEN) -->
+            <div class="mobile-schedule-timeline" id="mobileScheduleTimeline"></div>
+
+            <!-- MASAÜSTÜ TABLOSU (Masaüstünde Aynen Kalır) -->
             <div class="sched-table-wrap">
                 <table class="sched-table" id="schedTable"></table>
             </div>
+
             <div style="margin-top:20px;display:flex;justify-content:flex-end;">
-                <button class="btn-add" id="endWeekBtn" style="background:var(--clay);font-size:15px;padding:12px 20px;">🏁 Bu Haftayı Bitir ve Kaydet</button>
+                <button class="btn-add" id="endWeekBtn" style="background:var(--clay);font-size:15px;padding:12px 20px;width:100%;">🏁 Bu Haftayı Bitir ve Kaydet</button>
             </div>
         </div>
 
         <!-- DEMO PROGRAMI SEKME -->
         <div class="view" id="view-demoSchedule">
+            <!-- MOBİL İÇİN DEMO GÜN SEÇİCİ -->
+            <div class="mobile-day-selector" id="mobileDemoDaySelector"></div>
+            <div class="mobile-schedule-timeline" id="mobileDemoTimeline"></div>
+
             <div class="sched-table-wrap">
                 <table class="sched-table" id="demoTable"></table>
             </div>
@@ -747,7 +912,6 @@
         <h2 id="entryActionTitle">İşlem Seç</h2>
         <p id="entryActionSub" style="color:var(--ink-soft);font-size:13px;margin-bottom:16px;"></p>
         <div id="entryActionMenu">
-            <!-- AKTİFLEŞTİR (DONDURMAYI KALDIR) BUTONU -->
             <button class="action-menu-btn" id="eaUnfreezeBtn" style="background:#EBF1E8;color:#38502E;border-color:#BACFB0;display:none;">☀️ Dondurmayı Kaldır (Aktifleştir)</button>
             <button class="action-menu-btn" id="eaUndoBtn" style="background:#FFF3CD;color:#856404;border-color:#FFEEBA;">↩️ Yoklamayı Geri Al / Düzelt</button>
             <button class="action-menu-btn" id="eaFreezeBtn">❄️ Dondur</button>
@@ -843,6 +1007,11 @@
     let eaContext = null;
     let vcContext = null;
 
+    // Cihaz ve Mobil Görünüm Değişkenleri
+    let isMobileView = false;
+    let selectedMobileScheduleDay = 'Pazartesi';
+    let selectedMobileDemoDay = 'Pazartesi';
+
     const listArea = document.getElementById('listArea');
     const overlay = document.getElementById('overlay');
     const ALL_PANEL_IDS = ['panel', 'paymentPanel', 'freezePanel', 'demoAddPanel', 'entryActionPanel', 'virtualCancelPanel', 'adminLoginPanel', 'changePassPanel', 'historyPanel', 'weekDetailPanel', 'monthDetailPanel'];
@@ -871,6 +1040,42 @@
 
     function getPackageTotalSessions(typeName) {
         return SESSIONS_MAP[typeName] || 8;
+    }
+
+    /* ---------- CİHAZ AYRIMI & MOD DEĞİŞTİRME ---------- */
+    function initDeviceDetection() {
+        const savedMode = localStorage.getItem('app_device_mode');
+        if (savedMode) {
+            isMobileView = (savedMode === 'mobile');
+        } else {
+            // Otomatik tespit: Ekran 768px veya altındaysa mobil aç
+            isMobileView = window.innerWidth <= 768;
+        }
+        applyDeviceView();
+
+        // Bugünün gününü seçili yap
+        const todayIdx = new Date().getDay(); // 0 Pazar
+        const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+        selectedMobileScheduleDay = dayNames[todayIdx];
+        selectedMobileDemoDay = dayNames[todayIdx];
+    }
+
+    window.toggleDeviceMode = function() {
+        isMobileView = !isMobileView;
+        localStorage.setItem('app_device_mode', isMobileView ? 'mobile' : 'desktop');
+        applyDeviceView();
+        renderCurrentView();
+    };
+
+    function applyDeviceView() {
+        const btn = document.getElementById('toggleDeviceBtn');
+        if (isMobileView) {
+            document.body.classList.add('is-mobile-view');
+            btn.textContent = '💻 Masaüstü Görünümüne Geç';
+        } else {
+            document.body.classList.remove('is-mobile-view');
+            btn.textContent = '📱 Mobil Görünüme Geç';
+        }
     }
 
     /* ---------- YEREL VERİ YÖNETİMİ ---------- */
@@ -1279,7 +1484,7 @@
         renderScheduleGrid();
     }
 
-    /* ---------- 2. DERS PROGRAMI & KONTENJAN ---------- */
+    /* ---------- 2. DERS PROGRAMI (MASAÜSTÜ & MOBİL AYRI) ---------- */
     function getAllTimeSlots() {
         let base = [];
         for (let h = 9; h <= 22; h++) base.push(String(h).padStart(2, '0') + ':00');
@@ -1306,7 +1511,6 @@
     function renderScheduleGrid() {
         const now = new Date();
         const times = getAllTimeSlots();
-        const table = document.getElementById('schedTable');
         let cellEntries = {};
         function key(d, t) { return d + '|' + t; }
 
@@ -1344,6 +1548,8 @@
             });
         });
 
+        // 1. MASAÜSTÜ TABLOSU (Mevcut yapı hiç bozulmadı)
+        const table = document.getElementById('schedTable');
         let thead = '<thead><tr><th>Saat</th>' + DAY_ORDER.map(d => `<th>${d}</th>`).join('') + '</tr></thead>';
         let tbody = '<tbody>';
 
@@ -1371,19 +1577,10 @@
                             let cls = '';
                             let tag = '';
 
-                            if (e.moved) {
-                                cls = 'moved';
-                                tag = ' (Ders Değişikliği)';
-                            } else if (e.virtual) {
-                                cls = 'virtual';
-                                tag = ' (Taşındı)';
-                            } else if (e.postponed) {
-                                cls = 'postponed';
-                                tag = ' (Ertelendi)';
-                            } else if (e.frozen) {
-                                cls = 'frozen';
-                                tag = ' (Donduruldu)';
-                            }
+                            if (e.moved) { cls = 'moved'; tag = ' (Ders Değişikliği)'; }
+                            else if (e.virtual) { cls = 'virtual'; tag = ' (Taşındı)'; }
+                            else if (e.postponed) { cls = 'postponed'; tag = ' (Ertelendi)'; }
+                            else if (e.frozen) { cls = 'frozen'; tag = ' (Donduruldu)'; }
 
                             tbody += `<div class="cell-entry ${cls}" data-member-id="${e.memberId}" data-slot-id="${e.slotId}" data-occ-date="${e.occDate}" data-virtual="${e.virtual ? '1' : '0'}">
                                         <div class="en-name">${escapeHtml(e.memberName)}${tag}</div>
@@ -1414,7 +1611,95 @@
         });
         tbody += '</tbody>';
         table.innerHTML = thead + tbody;
+
+        // 2. MOBİL DERS PROGRAMI (GÜNLÜK AKIŞ - SAĞA SOLA ÇEKMEDEN)
+        renderMobileScheduleView(cellEntries, times);
     }
+
+    function renderMobileScheduleView(cellEntries, times) {
+        // Gün Seçici Şerit
+        const daySelector = document.getElementById('mobileDaySelector');
+        const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
+        
+        daySelector.innerHTML = DAY_ORDER.map(d => `
+            <button class="btn-mob-day ${d === selectedMobileScheduleDay ? 'active' : ''}" onclick="selectMobileScheduleDay('${d}')">
+                ${shortDays[d] || d}
+            </button>
+        `).join('');
+
+        // Seçilen Günün Saatlik Akışı
+        const timeline = document.getElementById('mobileScheduleTimeline');
+        let html = '';
+
+        times.forEach(t => {
+            const entries = (cellEntries[selectedMobileScheduleDay + '|' + t]) || [];
+            
+            // Eğer saatte ders varsa dolu kart, yoksa boş saat
+            if (entries.length > 0) {
+                html += `<div class="mob-time-slot">
+                    <div class="mob-time-header">
+                        <span>⏰ ${t}</span>
+                        <span style="font-size:12px;font-weight:500;color:var(--ink-soft);">${entries.length} Üye</span>
+                    </div>`;
+
+                let grouped = {};
+                entries.forEach(e => {
+                    if (!grouped[e.instructorId]) grouped[e.instructorId] = [];
+                    grouped[e.instructorId].push(e);
+                });
+
+                Object.keys(grouped).forEach(instId => {
+                    const instName = getInstructorName(instId);
+                    const instStudents = grouped[instId];
+
+                    html += `<div class="inst-group-box" style="margin-bottom:0;">
+                                <div class="inst-group-title">${escapeHtml(instName)}</div>`;
+
+                    instStudents.forEach(e => {
+                        let cls = '';
+                        let tag = '';
+                        if (e.moved) { cls = 'moved'; tag = ' (Değişiklik)'; }
+                        else if (e.virtual) { cls = 'virtual'; tag = ' (Taşındı)'; }
+                        else if (e.postponed) { cls = 'postponed'; tag = ' (Ertelendi)'; }
+                        else if (e.frozen) { cls = 'frozen'; tag = ' (Donduruldu)'; }
+
+                        html += `<div class="cell-entry ${cls}" style="padding:10px 8px;margin-bottom:6px;" data-member-id="${e.memberId}" data-slot-id="${e.slotId}" data-occ-date="${e.occDate}" data-virtual="${e.virtual ? '1' : '0'}">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <b style="font-size:14px;color:var(--ink);">${escapeHtml(e.memberName)}${tag}</b>
+                                        <span style="font-size:11.5px;color:var(--ink-soft);">${escapeHtml(e.type)}</span>
+                                    </div>`;
+
+                        if (e.attendance === 'completed') {
+                            html += `<span class="att-status completed" style="margin-top:6px;">✓ Seans Yapıldı</span>`;
+                        } else if (e.attendance === 'missed') {
+                            html += `<span class="att-status missed" style="margin-top:6px;">✗ Ders Yapılmadı / Gelmedi</span>`;
+                        } else if (e.showActions) {
+                            html += `
+                                <div class="attendance-actions" style="margin-top:8px;">
+                                    <button class="btn-check" style="flex:1;" onclick="handleAttendance(event, '${e.memberId}', '${e.slotId}', '${e.occDate}', true)">✓ Seans Yapıldı</button>
+                                    <button class="btn-cross" style="flex:1;" onclick="handleAttendance(event, '${e.memberId}', '${e.slotId}', '${e.occDate}', false)">✗ Gelmedi</button>
+                                </div>`;
+                        }
+                        html += `</div>`;
+                    });
+                    html += `</div>`;
+                });
+
+                html += `</div>`;
+            }
+        });
+
+        if (!html) {
+            html = `<div class="empty" style="background:#fff;border-radius:10px;border:1px solid var(--line);"><div class="big">${selectedMobileScheduleDay} Günü Ders Yok</div>Bu güne ait planlanmış seans bulunmuyor.</div>`;
+        }
+
+        timeline.innerHTML = html;
+    }
+
+    window.selectMobileScheduleDay = function(d) {
+        selectedMobileScheduleDay = d;
+        renderScheduleGrid();
+    };
 
     window.handleAttendance = function(event, memberId, slotId, occDate, isCompleted) {
         event.stopPropagation();
@@ -1507,7 +1792,7 @@
             pastMonthsCol.style.display = isOwner ? 'block' : 'none';
         }
         if (splitWrap) {
-            splitWrap.style.gridTemplateColumns = isOwner ? '1fr 1fr' : '1fr';
+            splitWrap.style.gridTemplateColumns = (isOwner && !isMobileView) ? '1fr 1fr' : '1fr';
         }
 
         const weekWrap = document.getElementById('pastWeeksList');
@@ -1530,7 +1815,6 @@
             weekWrap.innerHTML = html;
         }
 
-        // SADECE YÖNETİCİDE GEÇMİŞ AY VE CİROLAR RENDER EDİLİR
         if (isOwner) {
             const monthWrap = document.getElementById('pastMonthsList');
             if (!pastMonths.length) {
@@ -1643,7 +1927,7 @@
         renderPastSplitView();
     };
 
-    /* ---------- 3. DEMO PROGRAMI ---------- */
+    /* ---------- 3. DEMO PROGRAMI (MASAÜSTÜ & MOBİL) ---------- */
     function renderDemoGrid() {
         const times = getAllTimeSlots();
         const table = document.getElementById('demoTable');
@@ -1693,7 +1977,76 @@
 
         tbody += '</tbody>';
         table.innerHTML = thead + tbody;
+
+        // Mobilde Demo Akışı
+        renderMobileDemoView(times);
     }
+
+    function renderMobileDemoView(times) {
+        const daySelector = document.getElementById('mobileDemoDaySelector');
+        const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
+        
+        daySelector.innerHTML = DAY_ORDER.map(d => `
+            <button class="btn-mob-day ${d === selectedMobileDemoDay ? 'active' : ''}" onclick="selectMobileDemoDay('${d}')">
+                ${shortDays[d] || d}
+            </button>
+        `).join('');
+
+        const timeline = document.getElementById('mobileDemoTimeline');
+        let html = '';
+
+        times.forEach(t => {
+            let rowHtml = '';
+
+            instructors.forEach(inst => {
+                let occupants = [];
+                members.forEach(m => {
+                    (m.schedule || []).forEach(s => {
+                        if (s.day === selectedMobileDemoDay && s.time === t && s.instructorId === inst.id) {
+                            occupants.push({ type: m.type, name: m.name });
+                        }
+                    });
+                });
+
+                const demo = demos.find(d => d.time === t && d.instructorId === inst.id && JS_DOW[new Date(d.date + 'T00:00:00').getDay()] === selectedMobileDemoDay);
+
+                if (demo) {
+                    rowHtml += `<div class="demo-inst-row demo-row-booked">${escapeHtml(inst.name)}: Demo (${escapeHtml(demo.name)})</div>`;
+                } else if (occupants.length > 0) {
+                    const firstType = occupants[0].type;
+                    const cap = CAPACITY[firstType] || 1;
+
+                    if (cap <= 2) {
+                        rowHtml += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: ${cap === 1 ? 'Bireysel' : 'Düet'} (Dolu)</div>`;
+                    } else {
+                        if (occupants.length >= cap) {
+                            rowHtml += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: Grup (${cap}/${cap} Dolu)</div>`;
+                        } else {
+                            rowHtml += `<div class="demo-inst-row demo-row-avail" onclick="openDemoAddModal('${selectedMobileDemoDay}', '${t}', '${inst.id}')">${escapeHtml(inst.name)}: Grup (${occupants.length}/${cap} - Müsait)</div>`;
+                        }
+                    }
+                }
+            });
+
+            if (rowHtml) {
+                html += `<div class="mob-time-slot">
+                    <div class="mob-time-header">⏰ ${t}</div>
+                    ${rowHtml}
+                </div>`;
+            }
+        });
+
+        if (!html) {
+            html = `<div class="empty" style="background:#fff;border-radius:10px;border:1px solid var(--line);"><div class="big">${selectedMobileDemoDay} Müsaitlik Bilgisi</div>Bu günde dolu veya müsait bir seans kaydı bulunmuyor.</div>`;
+        }
+
+        timeline.innerHTML = html;
+    }
+
+    window.selectMobileDemoDay = function(d) {
+        selectedMobileDemoDay = d;
+        renderDemoGrid();
+    };
 
     window.openDemoAddModal = function(day, time, instructorId) {
         document.getElementById('d-name').value = '';
@@ -2134,7 +2487,10 @@
     });
 
     /* ---------- HÜCRE AKSİYONLARI & AKTİFLEŞTİRME ---------- */
-    document.getElementById('schedTable').addEventListener('click', (e) => {
+    document.getElementById('schedTable').addEventListener('click', handleCellClick);
+    document.getElementById('mobileScheduleTimeline').addEventListener('click', handleCellClick);
+
+    function handleCellClick(e) {
         const entry = e.target.closest('.cell-entry');
         if (!entry) return;
 
@@ -2173,7 +2529,7 @@
         }
 
         openPanel('entryActionPanel');
-    });
+    }
 
     // DONDURMAYI KALDIR (AKTİFLEŞTİR)
     document.getElementById('eaUnfreezeBtn').addEventListener('click', () => {
@@ -2296,6 +2652,7 @@
     overlay.addEventListener('click', closeAllPanels);
     document.getElementById('cancelBtn').addEventListener('click', closeAllPanels);
 
+    initDeviceDetection();
     initRole();
     </script>
 </body>
