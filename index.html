@@ -37,6 +37,43 @@
         -webkit-font-smoothing: antialiased;
     }
 
+    /* GİRİŞ EKRANI (LOGIN GATE) */
+    #loginGate {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .login-box {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 36px 30px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    .login-box h2 {
+        font-family: 'Fraunces', serif;
+        font-size: 24px;
+        margin: 0 0 8px;
+        color: var(--ink);
+    }
+    .login-box p {
+        font-size: 13px;
+        color: var(--ink-soft);
+        margin: 0 0 24px;
+    }
+    .login-box .field {
+        text-align: left;
+        margin-bottom: 16px;
+    }
+
     .wrap {
         max-width: 1220px;
         margin: 0 auto;
@@ -46,7 +83,7 @@
     header.top {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start; /* Sayaçların sayfanın en üstünde kalmasını sağlar */
+        align-items: flex-start;
         border-bottom: 1px solid var(--line);
         padding-bottom: 16px;
         margin-bottom: 20px;
@@ -61,7 +98,6 @@
         flex: 1;
     }
     
-    /* İŞARETLEDİĞİN TAM BÜYÜKLÜKTEKİ LOGO */
     .studio-logo {
         height: 220px !important;
         max-height: 220px !important;
@@ -78,7 +114,6 @@
         margin: 0;
     }
 
-    /* HEADER SAĞ BLOK (Sayaçlar + En Sağa Hizalı Butonlar) */
     .header-right {
         display: flex;
         flex-direction: column;
@@ -92,17 +127,24 @@
         align-items: center;
         justify-content: flex-end;
         width: 100%;
+        flex-wrap: wrap;
     }
 
-    .role-switch, .change-pass-link, .device-toggle-link {
+    .role-switch, .change-pass-link, .device-toggle-link, .logout-link {
         font-size: 13px;
         color: var(--ink-soft);
         text-decoration: underline;
         cursor: pointer;
         font-weight: 500;
     }
-    .device-toggle-link {
-        color: var(--clay);
+    .device-toggle-link { color: var(--clay); font-weight: 600; }
+    .logout-link { color: var(--alert); font-weight: 600; }
+    .user-tag {
+        font-size: 12.5px;
+        background: var(--sage-soft);
+        color: var(--sage-dark);
+        padding: 3px 8px;
+        border-radius: 6px;
         font-weight: 600;
     }
 
@@ -116,14 +158,12 @@
         min-width: 95px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-
     .stat .num {
         font-family: 'Fraunces', serif;
         font-size: 22px;
         font-weight: 600;
         line-height: 1;
     }
-
     .stat .num.alert { color: var(--alert); }
     .stat .num.clay { color: var(--clay); }
     .stat .label { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
@@ -153,7 +193,6 @@
         white-space: nowrap;
         flex: none;
     }
-
     .tab-btn.on {
         color: var(--ink);
         border-bottom-color: var(--sage);
@@ -190,7 +229,6 @@
         font-size: 13px;
         cursor: pointer;
     }
-
     .filter-chip.on {
         background: var(--sage-soft);
         border-color: var(--sage);
@@ -238,7 +276,6 @@
         gap: 12px;
         align-items: center;
     }
-
     .row.head {
         background: transparent;
         padding: 0 16px 8px;
@@ -290,7 +327,6 @@
         font-size: 11px;
         font-weight: 600;
     }
-
     .badge.active { background: var(--sage-soft); color: var(--sage-dark); }
     .badge.low { background: var(--alert-soft); color: var(--alert); }
     .badge.done { background: #EFEDE6; color: var(--ink-soft); }
@@ -315,22 +351,16 @@
         border-radius: 10px;
         background: var(--panel);
     }
-
     table.sched-table {
         border-collapse: collapse;
         width: 100%;
         min-width: 960px;
     }
-
-    table.sched-table tr {
-        border-bottom: 2px solid var(--line-strong);
-    }
-
+    table.sched-table tr { border-bottom: 2px solid var(--line-strong); }
     table.sched-table th, table.sched-table td {
         border: 1px solid var(--line);
         padding: 0;
     }
-
     table.sched-table thead th {
         background: var(--sage-soft);
         color: var(--sage-dark);
@@ -339,7 +369,6 @@
         text-align: center;
         border-bottom: 2px solid var(--line-strong);
     }
-
     table.sched-table thead th:first-child {
         text-align: left;
         padding-left: 12px;
@@ -347,7 +376,6 @@
         left: 0;
         z-index: 3;
     }
-
     table.sched-table td.time-cell {
         background: var(--bg);
         font-weight: 600;
@@ -359,7 +387,6 @@
         left: 0;
         z-index: 2;
     }
-
     table.sched-table td.slot-cell {
         min-width: 135px;
         vertical-align: top;
@@ -374,7 +401,6 @@
         margin-bottom: 5px;
     }
     .inst-group-box:last-child { margin-bottom: 0; }
-
     .inst-group-title {
         font-size: 10.5px;
         font-weight: 700;
@@ -412,7 +438,6 @@
         margin-top: 5px;
         align-items: center;
     }
-
     .btn-check, .btn-cross {
         border: none;
         border-radius: 4px;
@@ -448,34 +473,12 @@
         font-weight: 600;
     }
     .demo-inst-row:last-child { margin-bottom: 0; }
-
-    .demo-row-avail {
-        background: #EDF3E8;
-        color: #38502E;
-        cursor: pointer;
-        border: 1px solid #D1E2C9;
-    }
+    .demo-row-avail { background: #EDF3E8; color: #38502E; cursor: pointer; border: 1px solid #D1E2C9; }
     .demo-row-avail:hover { background: #E1ECDB; }
+    .demo-row-locked { background: #F8E7E5; color: #933829; border: 1px solid #F0CBC6; }
+    .demo-row-booked { background: var(--clay-soft); color: var(--clay); font-weight: 600; border: 1px solid #E5CEBA; }
 
-    .demo-row-locked {
-        background: #F8E7E5;
-        color: #933829;
-        border: 1px solid #F0CBC6;
-    }
-
-    .demo-row-booked {
-        background: var(--clay-soft);
-        color: var(--clay);
-        font-weight: 600;
-        border: 1px solid #E5CEBA;
-    }
-
-    .past-split-wrap {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-
+    .past-split-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .past-column-title {
         font-family: 'Fraunces', serif;
         font-size: 17px;
@@ -492,7 +495,6 @@
         margin-bottom: 8px;
         background: var(--bg);
     }
-
     .schedule-slot-row { display: flex; gap: 6px; margin-bottom: 6px; }
     .schedule-slot-row select, .schedule-slot-row input {
         flex: 1;
@@ -554,7 +556,6 @@
         font-weight: 600;
         cursor: pointer;
     }
-
     .btn-secondary {
         padding: 12px 16px;
         background: transparent;
@@ -582,62 +583,20 @@
     .empty { text-align: center; padding: 50px 20px; color: var(--ink-soft); }
     .empty .big { font-family: 'Fraunces', serif; font-size: 18px; color: var(--ink); margin-bottom: 4px; }
 
-    /* ======================================================== */
-    /* MOBİL GÖRÜNÜM ÖZEL STİLLERİ (Masaüstünü Asla Bozmaz)   */
-    /* ======================================================== */
-    body.is-mobile-view .wrap {
-        padding: 16px 14px 60px;
-    }
-    body.is-mobile-view header.top {
-        padding-bottom: 14px;
-        margin-bottom: 14px;
-        gap: 12px;
-    }
-    body.is-mobile-view .studio-logo {
-        height: 70px;
-        max-width: 250px;
-        margin: 0;
-    }
-    body.is-mobile-view .header-right {
-        align-items: stretch;
-        width: 100%;
-    }
-    body.is-mobile-view .header-links {
-        justify-content: space-between;
-    }
-    body.is-mobile-view .stats {
-        width: 100%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-    body.is-mobile-view .stat {
-        padding: 8px 10px;
-        min-width: 0;
-    }
-    body.is-mobile-view .toolbar {
-        gap: 8px;
-    }
-    body.is-mobile-view .toolbar button {
-        flex: 1;
-        font-size: 12.5px;
-        padding: 8px 10px;
-        text-align: center;
-        white-space: nowrap;
-    }
-    body.is-mobile-view .controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-    body.is-mobile-view .search {
-        width: 100%;
-    }
+    /* Mobil Görünüm Stilleri */
+    body.is-mobile-view .wrap { padding: 16px 14px 60px; }
+    body.is-mobile-view header.top { padding-bottom: 14px; margin-bottom: 14px; gap: 12px; }
+    body.is-mobile-view .studio-logo { height: 70px; max-width: 250px; margin: 0; }
+    body.is-mobile-view .header-right { align-items: stretch; width: 100%; }
+    body.is-mobile-view .header-links { justify-content: space-between; }
+    body.is-mobile-view .stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    body.is-mobile-view .stat { padding: 8px 10px; min-width: 0; }
+    body.is-mobile-view .toolbar { gap: 8px; }
+    body.is-mobile-view .toolbar button { flex: 1; font-size: 12.5px; padding: 8px 10px; text-align: center; white-space: nowrap; }
+    body.is-mobile-view .controls { flex-direction: column; align-items: stretch; gap: 8px; }
+    body.is-mobile-view .search { width: 100%; }
 
-    /* Mobilde Üyeler Kart Tasarımı */
-    body.is-mobile-view .row.head {
-        display: none;
-    }
+    body.is-mobile-view .row.head { display: none; }
     body.is-mobile-view .row {
         display: flex;
         flex-direction: column;
@@ -653,11 +612,7 @@
         padding: 8px 12px;
         border-radius: 8px;
     }
-    body.is-mobile-view .btn-step {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
+    body.is-mobile-view .btn-step { width: 32px; height: 32px; font-size: 18px; }
     body.is-mobile-view .row-actions {
         justify-content: stretch;
         display: grid;
@@ -665,15 +620,9 @@
         gap: 6px;
         margin-top: 4px;
     }
-    body.is-mobile-view .row-actions .icon-btn {
-        padding: 8px;
-        text-align: center;
-    }
+    body.is-mobile-view .row-actions .icon-btn { padding: 8px; text-align: center; }
 
-    /* Mobilde Ders Programı Akış Tasarımı */
-    .mobile-day-selector {
-        display: none;
-    }
+    .mobile-day-selector { display: none; }
     body.is-mobile-view .mobile-day-selector {
         display: flex;
         gap: 6px;
@@ -697,23 +646,11 @@
         cursor: pointer;
         white-space: nowrap;
     }
-    body.is-mobile-view .btn-mob-day.active {
-        background: var(--sage);
-        color: #fff;
-        border-color: var(--sage-dark);
-    }
+    body.is-mobile-view .btn-mob-day.active { background: var(--sage); color: #fff; border-color: var(--sage-dark); }
 
-    .mobile-schedule-timeline {
-        display: none;
-    }
-    body.is-mobile-view .mobile-schedule-timeline {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-    body.is-mobile-view .sched-table-wrap {
-        display: none;
-    }
+    .mobile-schedule-timeline { display: none; }
+    body.is-mobile-view .mobile-schedule-timeline { display: flex; flex-direction: column; gap: 8px; }
+    body.is-mobile-view .sched-table-wrap { display: none; }
     body.is-mobile-view .mob-time-slot {
         background: var(--panel);
         border: 1px solid var(--line);
@@ -741,21 +678,38 @@
 </head>
 <body>
 
-    <div class="wrap" id="appRoot">
+    <!-- GİRİŞ EKRANI (LOGIN GATE) -->
+    <div id="loginGate">
+        <div class="login-box">
+            <h2>Eğitmen Girişi</h2>
+            <p>Devam etmek için eğitmen adınızı ve şifrenizi girin.</p>
+            <div class="field">
+                <label>Kullanıcı Adı (Hoca Adı)</label>
+                <input id="login-username" placeholder="Örn. Hoca 1" autocomplete="off"/>
+            </div>
+            <div class="field">
+                <label>Şifre</label>
+                <input id="login-pass" type="password" placeholder="Şifrenizi girin"/>
+            </div>
+            <button class="btn-primary" id="loginSubmitBtn" style="width:100%;margin-top:8px;">Giriş Yap</button>
+        </div>
+    </div>
+
+    <div class="wrap" id="appRoot" style="display:none;">
         <header class="top">
             <div class="header-left">
-                <!-- LOGO ALANI -->
                 <img src="logo.jpg" alt="Stüdyo Logo" class="studio-logo" id="studioLogoImg" onerror="handleLogoError(this)">
                 <p class="studio-name" id="logoFallbackText" style="display:none;">Stüdyo Takip</p>
             </div>
 
-            <!-- SAĞ ÜST KISIM (SAYAÇLAR VE EN SAĞA HİZALI BUTONLAR) -->
             <div class="header-right">
                 <div class="stats" id="statsRow"></div>
                 <div class="header-links">
+                    <span class="user-tag" id="loggedUserDisplay">👤 Hoca</span>
                     <span class="role-switch" id="switchRoleLink">Yönetici Girişi</span>
                     <span class="device-toggle-link" id="toggleDeviceBtn" onclick="toggleDeviceMode()">📱 Mobil Görünüm</span>
                     <span class="change-pass-link" id="openPassModalLink" style="display:none;">🔑 Şifre Değiştir</span>
+                    <span class="logout-link" id="logoutBtn" onclick="handleLogout()">🚪 Çıkış Yap</span>
                 </div>
             </div>
         </header>
@@ -792,17 +746,11 @@
             <div class="controls">
                 <div id="instructorTabs" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
             </div>
-
-            <!-- MOBİL İÇİN GÜN SEÇİCİ ŞERİT -->
             <div class="mobile-day-selector" id="mobileDaySelector"></div>
-            <!-- MOBİL İÇİN DİKEY ZAMAN AKIŞI (SAĞA SOLA ÇEKMEDEN) -->
             <div class="mobile-schedule-timeline" id="mobileScheduleTimeline"></div>
-
-            <!-- MASAÜSTÜ TABLOSU (Masaüstünde Aynen Kalır) -->
             <div class="sched-table-wrap">
                 <table class="sched-table" id="schedTable"></table>
             </div>
-
             <div style="margin-top:20px;display:flex;justify-content:flex-end;">
                 <button class="btn-add" id="endWeekBtn" style="background:var(--clay);font-size:15px;padding:12px 20px;width:100%;">🏁 Bu Haftayı Bitir ve Kaydet</button>
             </div>
@@ -810,10 +758,8 @@
 
         <!-- DEMO PROGRAMI SEKME -->
         <div class="view" id="view-demoSchedule">
-            <!-- MOBİL İÇİN DEMO GÜN SEÇİCİ -->
             <div class="mobile-day-selector" id="mobileDemoDaySelector"></div>
             <div class="mobile-schedule-timeline" id="mobileDemoTimeline"></div>
-
             <div class="sched-table-wrap">
                 <table class="sched-table" id="demoTable"></table>
             </div>
@@ -831,6 +777,17 @@
                     <div id="pastMonthsList"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- STOK MULTİNET SEKME (Sadece Yönetici) -->
+        <div class="view" id="view-multiStock">
+            <div class="controls" style="justify-content:space-between;">
+                <p style="font-size:13.5px;color:var(--ink-soft);margin:0;">
+                    💳 <b>MultiSport Stok & Kart Çekim Yönetimi:</b> Kart elinizdeyken yapılan ekstra basımları buradan takip edebilir, 
+                    ister <b>200₺ Dengeleme</b> (4 basım kuralı) ister <b>400₺ Doğrudan Kasa Geliri</b> olarak aktarabilirsiniz.
+                </p>
+            </div>
+            <div id="multiStockListArea"></div>
         </div>
 
         <!-- GELİR / GİDER SEKME (Sadece Yönetici) -->
@@ -1011,7 +968,7 @@
         { name: "12 Seans Bireysel", price: 9300, capacity: 1, sessions: 12, group: 'bireysel' },
         { name: "8 Seans Hamile Pilates", price: 8000, capacity: 1, sessions: 8, group: 'hamile' },
         { name: "12 Seans Hamile Pilates", price: 10000, capacity: 1, sessions: 12, group: 'hamile' },
-        { name: "MultiSport Grup Reformer", price: 4000, capacity: 4, sessions: 12, group: 'grup', isMulti: true }
+        { name: "MultiSport Grup Reformer", price: 4000, capacity: 4, sessions: 8, group: 'grup', isMulti: true }
     ];
 
     const PRICE_MAP = {};
@@ -1027,6 +984,7 @@
     const JS_DOW = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
     let role = 'hoca';
+    let loggedUser = null;
     let members = [];
     let instructors = [];
     let demos = [];
@@ -1080,13 +1038,10 @@
         return SESSIONS_MAP[typeName] || 8;
     }
 
-    /* Logo Yükleme Hatası Yönetimi */
     function handleLogoError(img) {
-        if (img.src.includes('logo.jpg')) {
-            img.src = 'logo.png';
-        } else if (img.src.includes('logo.png')) {
-            img.src = 'logo.jpeg';
-        } else {
+        if (img.src.includes('logo.jpg')) img.src = 'logo.png';
+        else if (img.src.includes('logo.png')) img.src = 'logo.jpeg';
+        else {
             img.style.display = 'none';
             document.getElementById('logoFallbackText').style.display = 'block';
         }
@@ -1094,17 +1049,11 @@
 
     function initDeviceDetection() {
         const savedMode = localStorage.getItem('app_device_mode');
-        if (savedMode) {
-            isMobileView = (savedMode === 'mobile');
-        } else {
-            isMobileView = window.innerWidth <= 768;
-        }
+        isMobileView = savedMode ? (savedMode === 'mobile') : (window.innerWidth <= 768);
         applyDeviceView();
-
         const todayIdx = new Date().getDay();
-        const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-        selectedMobileScheduleDay = dayNames[todayIdx];
-        selectedMobileDemoDay = dayNames[todayIdx];
+        selectedMobileScheduleDay = JS_DOW[todayIdx];
+        selectedMobileDemoDay = JS_DOW[todayIdx];
     }
 
     window.toggleDeviceMode = function() {
@@ -1151,21 +1100,81 @@
             if (!m.payments) m.payments = [];
             if (m.missedCount == null) m.missedCount = 0;
             if (!m.totalSessions) m.totalSessions = getPackageTotalSessions(m.type);
-            m.schedule.forEach(s => {
-                if (!s.attendance) s.attendance = {};
-            });
+            if (m.multiStock == null) m.multiStock = 0;
+            if (m.multiBalanced == null) m.multiBalanced = 0;
+            m.schedule.forEach(s => { if (!s.attendance) s.attendance = {}; });
         });
 
         if (!instructors.length) {
             instructors = [
-                { id: uid('i'), name: 'Hoca 1', primPercent: 30 },
-                { id: uid('i'), name: 'Hoca 2', primPercent: 30 }
+                { id: uid('i'), name: 'Hoca 1', primPercent: 30, pass: '1234' },
+                { id: uid('i'), name: 'Hoca 2', primPercent: 30, pass: '1234' }
             ];
+            saveInstructors();
+        } else {
+            instructors.forEach(inst => { if (!inst.pass) inst.pass = '1234'; });
             saveInstructors();
         }
 
         renderCurrentView();
     }
+
+    /* GİRİŞ EKRANI VE OTURUM YÖNETİMİ */
+    function checkAuth() {
+        const storedUser = localStorage.getItem('app_logged_user');
+        if (storedUser) {
+            loggedUser = storedUser;
+            document.getElementById('loginGate').style.display = 'none';
+            document.getElementById('appRoot').style.display = 'block';
+            document.getElementById('loggedUserDisplay').textContent = '👤 ' + loggedUser;
+            initRole();
+        } else {
+            document.getElementById('loginGate').style.display = 'flex';
+            document.getElementById('appRoot').style.display = 'none';
+        }
+    }
+
+    document.getElementById('loginSubmitBtn').addEventListener('click', performLogin);
+    document.getElementById('login-pass').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performLogin();
+    });
+
+    function performLogin() {
+        const username = document.getElementById('login-username').value.trim();
+        const pass = document.getElementById('login-pass').value.trim();
+
+        if (!username || !pass) return alert('Lütfen kullanıcı adı ve şifrenizi girin.');
+
+        if (username.toLowerCase() === 'admin' && pass === getAdminPassword()) {
+            localStorage.setItem('app_logged_user', 'Yönetici');
+            localStorage.setItem('app_role', 'sahibi');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-pass').value = '';
+            checkAuth();
+            return;
+        }
+
+        const matched = instructors.find(i => i.name.toLowerCase() === username.toLowerCase() && (i.pass || '1234') === pass);
+
+        if (matched) {
+            localStorage.setItem('app_logged_user', matched.name);
+            localStorage.setItem('app_role', 'hoca');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-pass').value = '';
+            checkAuth();
+        } else {
+            alert('Kullanıcı adı veya şifre hatalı!');
+        }
+    }
+
+    window.handleLogout = function() {
+        if (!confirm('Oturumu kapatmak istiyor musunuz?')) return;
+        localStorage.removeItem('app_logged_user');
+        localStorage.removeItem('app_role');
+        loggedUser = null;
+        role = 'hoca';
+        checkAuth();
+    };
 
     function initRole() {
         role = localStorage.getItem('app_role') || 'hoca';
@@ -1246,6 +1255,7 @@
                 { id: 'members', label: 'Üyeler' },
                 { id: 'schedule', label: 'Ders Programı' },
                 { id: 'demoSchedule', label: 'Demo Programı' },
+                { id: 'multiStock', label: '💳 STOK MULTİNET' },
                 { id: 'pastWeeks', label: 'Geçmiş Haftalar' },
                 { id: 'finance', label: 'Gelir/Gider' },
                 { id: 'reminders', label: 'Hatırlatmalar' },
@@ -1276,6 +1286,7 @@
         if (currentTab === 'members') render();
         if (currentTab === 'schedule') renderScheduleGrid();
         if (currentTab === 'demoSchedule') renderDemoGrid();
+        if (currentTab === 'multiStock' && role === 'sahibi') renderMultiStock();
         if (currentTab === 'pastWeeks') renderPastSplitView();
         if (currentTab === 'instructorsMgmt' && role === 'sahibi') renderInstructorMgmt();
         if (currentTab === 'finance' && role === 'sahibi') renderFinance();
@@ -1283,9 +1294,7 @@
     }
 
     function lessonPriceOf(m) {
-        if (m.type === "MultiSport Grup Reformer") {
-            return 500;
-        }
+        if (m.type === "MultiSport Grup Reformer") return 500;
         const total = m.totalSessions || getPackageTotalSessions(m.type);
         const lastPayment = (m.payments || []).slice().reverse()[0];
         const baseAmount = lastPayment ? Number(lastPayment.amount) : (PRICE_MAP[m.type] || 0);
@@ -1294,14 +1303,13 @@
 
     function logLesson(m, instructorId, dateStr) {
         if (!instructorId) return;
-        const amount = lessonPriceOf(m);
         lessonLog.push({
             id: uid('l'),
             memberId: m.id,
             memberName: m.name,
             instructorId,
             date: dateStr,
-            amount: amount,
+            amount: lessonPriceOf(m),
             type: m.type
         });
         saveLessonLog();
@@ -1330,11 +1338,7 @@
     function getMemberScheduleDetail(m) {
         if (!m.schedule || !m.schedule.length) return '';
         const shortDays = { 'Pazartesi':'Pzt', 'Salı':'Sal', 'Çarşamba':'Çar', 'Perşembe':'Per', 'Cuma':'Cum', 'Cumartesi':'Cmt', 'Pazar':'Paz' };
-        return m.schedule.map(s => {
-            const hoca = getInstructorName(s.instructorId);
-            const gun = shortDays[s.day] || s.day;
-            return `${hoca} · ${gun} ${s.time}`;
-        }).join('  |  ');
+        return m.schedule.map(s => `${getInstructorName(s.instructorId)} · ${shortDays[s.day] || s.day} ${s.time}`).join('  |  ');
     }
 
     function render() {
@@ -1375,12 +1379,15 @@
                     <div class="m-phone">${escapeHtml(m.phone || '')}</div>
                     ${schedDetail ? `<div class="m-sched-sub">${escapeHtml(schedDetail)}</div>` : ''}
                   </div>
-                  <div class="m-pkg">${escapeHtml(m.type)}</div>
+                  <div class="m-pkg">
+                    ${escapeHtml(m.type)}
+                    ${isMulti ? `<div style="font-size:11px;color:var(--clay);font-weight:600;margin-top:2px;">Dengeleme: ${m.multiBalanced || 0}/4 Okutuldu</div>` : ''}
+                  </div>
                   <div class="sessions-wrap">
                     <button class="btn-step" onclick="changeSession('${m.id}', -1)" title="Seans Düş">-</button>
                     <span class="sessions ${st === 'low' || st === 'done' ? 'low' : ''}">${m.remaining} / ${totalPackSessions}</span>
                     <button class="btn-step" onclick="changeSession('${m.id}', 1)" title="Seans Ekle">+</button>
-                    ${isMulti && isOwner ? `<button class="btn-multi-read" onclick="handleMultiOkut('${m.id}')" title="200 TL Kasaya Direkt Gelir Yazar">📱 Multi Okut</button>` : ''}
+                    ${isMulti && isOwner ? `<button class="btn-multi-read" onclick="handleMultiOkut('${m.id}')" title="200 TL Kasaya Direkt Gelir Yazar">📱 Multi Okut (${m.multiBalanced || 0}/4)</button>` : ''}
                   </div>
                   <div>
                     <span class="badge ${st}">${st === 'active' ? 'Aktif' : st === 'low' ? 'Azalıyor' : 'Bitti'}</span>
@@ -1398,28 +1405,144 @@
         listArea.innerHTML = html;
     }
 
+    /* Multi Okut Butonu: Bildirim/alert çıkarmaz, direkt işler */
     window.handleMultiOkut = function(memberId) {
         const m = members.find(x => x.id === memberId);
         if (!m) return;
-        if (m.remaining <= 0) return alert('Bu üyenin kalan seansı bulunmuyor.');
-
-        m.remaining -= 1;
+        m.multiBalanced = (m.multiBalanced || 0) + 1;
         extraRevenueLog.push({
             id: uid('ex'),
             memberId: m.id,
             memberName: m.name,
             amount: 200,
             date: todayStr(),
-            note: 'MultiSport Ek Seans Okutma'
+            note: `MultiSport 200₺ Dengeleme Okutması (${m.multiBalanced}/4)`
         });
-
         if (m.frozenUntil) delete m.frozenUntil;
-
         saveExtraRevenue();
         saveMembers();
-        alert(`${m.name} için 1 Multi seans okutuldu.\n200 TL doğrudan kasaya eklendi (Hakedişe girmez).\nKalan Seans: ${m.remaining}`);
         render();
-        renderScheduleGrid();
+        if (currentTab === 'multiStock') renderMultiStock();
+    };
+
+    /* STOK MULTİNET SEKMESİ */
+    function renderMultiStock() {
+        if (role !== 'sahibi') return;
+        const wrap = document.getElementById('multiStockListArea');
+        const multiMembers = members.filter(m => m.type === "MultiSport Grup Reformer");
+
+        if (!multiMembers.length) {
+            wrap.innerHTML = '<div class="empty"><div class="big">Kayıtlı MultiSport Üyesi Yok</div>Üyeler bölümünden "MultiSport Grup Reformer" paketiyle üye ekleyebilirsiniz.</div>';
+            return;
+        }
+
+        let html = `
+            <div class="list">
+              <div class="row head" style="grid-template-columns:1.8fr 1.1fr 1.3fr 1.3fr;">
+                <div>MultiSport Üyesi & Durum Özeti</div>
+                <div style="text-align:center;">Kart Stok Havuzu (0/15)</div>
+                <div style="text-align:center;">Dengelemeye Aktar (200₺)</div>
+                <div style="text-align:right;">Direkt Kasaya Çek (400₺)</div>
+              </div>`;
+
+        multiMembers.forEach(m => {
+            const stock = m.multiStock || 0;
+            const balanced = m.multiBalanced || 0;
+            const remaining = m.remaining;
+            const totalSess = m.totalSessions || 8;
+
+            html += `
+                <div class="row" style="grid-template-columns:1.8fr 1.1fr 1.3fr 1.3fr; align-items:center;">
+                  <div>
+                    <div class="m-name">${escapeHtml(m.name)}</div>
+                    <div style="font-size:12px;color:var(--ink-soft);margin-top:2px;">
+                        <span style="color:#8A887C;font-style:italic;">(Kalan: <b>${remaining}/${totalSess}</b> Seans, Dengeleme: <b>${balanced}/4</b>)</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <button class="btn-step" onclick="changeMultiStock('${m.id}', -1)" title="Stok Azalt">-</button>
+                    <b style="font-size:16px;min-width:45px;text-align:center;color:${stock > 0 ? 'var(--clay)' : 'var(--ink-soft)'};">${stock} / 15</b>
+                    <button class="btn-step" onclick="changeMultiStock('${m.id}', 1)" title="Stok Artır">+</button>
+                  </div>
+                  <div style="text-align:center;">
+                    <button class="btn-ghost" onclick="transferStockToBalance('${m.id}')" style="background:#FAF5EE;border-color:var(--clay);color:var(--clay);font-weight:600;font-size:12px;padding:7px 10px;width:100%;" ${stock <= 0 ? 'disabled style="opacity:0.4;"' : ''}>
+                      🔄 1 Adet Dengele (+200₺)
+                    </button>
+                  </div>
+                  <div style="display:flex;justify-content:flex-end;gap:5px;">
+                    <button class="btn-add" onclick="transferStockDirectToCash('${m.id}')" style="background:var(--sage-dark);font-size:12px;padding:7px 12px;" ${stock <= 0 ? 'disabled style="opacity:0.4;"' : ''}>
+                      💰 Kasaya Çek (400₺)
+                    </button>
+                  </div>
+                </div>`;
+        });
+        html += '</div>';
+        wrap.innerHTML = html;
+    }
+
+    window.changeMultiStock = function(memberId, delta) {
+        const m = members.find(x => x.id === memberId);
+        if (!m) return;
+        let next = (m.multiStock || 0) + delta;
+        if (next < 0) next = 0;
+        if (next > 15) return alert('Maksimum 15 stok basım slotu tanımlanabilir.');
+        m.multiStock = next;
+        saveMembers();
+        renderMultiStock();
+    };
+
+    window.transferStockToBalance = function(memberId) {
+        const m = members.find(x => x.id === memberId);
+        if (!m || (m.multiStock || 0) <= 0) return alert('Stokta basım bulunmuyor.');
+
+        if ((m.multiBalanced || 0) >= 4) {
+            if (!confirm(`${m.name} için 4 adet dengeleme basımı zaten tamamlanmış görünüyor (${m.multiBalanced}/4).\nYine de stoktan 1 basım düşüp 200 TL dengeleme olarak kasaya aktarmak istiyor musunuz?`)) {
+                return;
+            }
+        }
+
+        m.multiStock -= 1;
+        m.multiBalanced = (m.multiBalanced || 0) + 1;
+        extraRevenueLog.push({
+            id: uid('ex'),
+            memberId: m.id,
+            memberName: m.name,
+            amount: 200,
+            date: todayStr(),
+            note: `MultiSport Stoktan Dengeleme Aktarımı (${m.multiBalanced}/4)`
+        });
+
+        saveMembers();
+        saveExtraRevenue();
+        renderMultiStock();
+        render();
+    };
+
+    window.transferStockDirectToCash = function(memberId) {
+        const m = members.find(x => x.id === memberId);
+        if (!m || (m.multiStock || 0) <= 0) return alert('Stokta basım bulunmuyor.');
+
+        const qtyStr = prompt(`${m.name} için kaç adet stok basımını DİREKT KASAYA (Adet x 400 TL) aktarmak istiyorsunuz?\nMevcut Stok: ${m.multiStock}`, "1");
+        if (!qtyStr) return;
+        const qty = parseInt(qtyStr);
+        if (isNaN(qty) || qty <= 0) return alert('Geçerli bir adet giriniz.');
+        if (qty > m.multiStock) return alert(`Stokta sadece ${m.multiStock} adet basım var.`);
+
+        const totalCash = qty * 400;
+        m.multiStock -= qty;
+        extraRevenueLog.push({
+            id: uid('ex'),
+            memberId: m.id,
+            memberName: m.name,
+            amount: totalCash,
+            date: todayStr(),
+            note: `MultiSport Direkt Kart Geliri (${qty} x 400₺)`
+        });
+
+        saveMembers();
+        saveExtraRevenue();
+        alert(`${m.name} için ${qty} adet basım doğrudan kasaya aktarıldı!\nKasaya Eklenen Tutar: ${totalCash.toLocaleString('tr-TR')} ₺ (Hakedişe girmez).\nKalan Stok: ${m.multiStock}/15`);
+        renderMultiStock();
     };
 
     window.changeSession = function(id, delta) {
@@ -1438,6 +1561,7 @@
         saveMembers();
         render();
         renderScheduleGrid();
+        if (currentTab === 'multiStock') renderMultiStock();
     };
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -1487,12 +1611,10 @@
                 <span style="font-size:22px;font-weight:700;color:var(--sage-dark);">${m.remaining}</span>
               </div>
             </div>
-
             <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:16px 0 8px;">Kayıt / Yenileme Geçmişi</h4>
             <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;margin-bottom:18px;">
               ${paymentsHtml || '<div style="padding:10px;text-align:center;color:var(--ink-soft);">Kayıt bulunamadı.</div>'}
             </div>
-
             <div style="display:flex;gap:10px;">
               <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
                 <span style="font-size:11px;color:var(--ink-soft);display:block;">TOPLAM ALINAN SEANS</span>
@@ -1524,6 +1646,7 @@
         saveMembers();
         render();
         renderScheduleGrid();
+        if (currentTab === 'multiStock') renderMultiStock();
     }
 
     function getAllTimeSlots() {
@@ -1607,17 +1730,11 @@
                     });
 
                     Object.keys(grouped).forEach(instId => {
-                        const instName = getInstructorName(instId);
-                        const instStudents = grouped[instId];
-
-                        tbody += `<div class="inst-group-box">`;
-                        tbody += `<div class="inst-group-title">${escapeHtml(instName)}</div>`;
-
-                        instStudents.forEach(e => {
+                        tbody += `<div class="inst-group-box"><div class="inst-group-title">${escapeHtml(getInstructorName(instId))}</div>`;
+                        grouped[instId].forEach(e => {
                             let cls = '';
                             let tag = '';
-
-                            if (e.moved) { cls = 'moved'; tag = ' (Ders Değişikliği)'; }
+                            if (e.moved) { cls = 'moved'; tag = ' (Değişiklik)'; }
                             else if (e.virtual) { cls = 'virtual'; tag = ' (Taşındı)'; }
                             else if (e.postponed) { cls = 'postponed'; tag = ' (Ertelendi)'; }
                             else if (e.frozen) { cls = 'frozen'; tag = ' (Donduruldu)'; }
@@ -1629,7 +1746,7 @@
                             if (e.attendance === 'completed') {
                                 tbody += `<span class="att-status completed">✓ Seans Yapıldı</span>`;
                             } else if (e.attendance === 'missed') {
-                                tbody += `<span class="att-status missed">✗ Ders Yapılmadı / Gelmedi</span>`;
+                                tbody += `<span class="att-status missed">✗ Gelmedi / Yapılmadı</span>`;
                             } else if (e.showActions) {
                                 tbody += `
                                     <div class="attendance-actions">
@@ -1637,14 +1754,11 @@
                                         <button class="btn-cross" onclick="handleAttendance(event, '${e.memberId}', '${e.slotId}', '${e.occDate}', false)" title="Derse Gelmedi">✗</button>
                                     </div>`;
                             }
-
                             tbody += `</div>`;
                         });
-
                         tbody += `</div>`;
                     });
                 }
-
                 tbody += `</td>`;
             });
             tbody += `</tr>`;
@@ -1670,14 +1784,8 @@
 
         times.forEach(t => {
             const entries = (cellEntries[selectedMobileScheduleDay + '|' + t]) || [];
-            
             if (entries.length > 0) {
-                html += `<div class="mob-time-slot">
-                    <div class="mob-time-header">
-                        <span>⏰ ${t}</span>
-                        <span style="font-size:12px;font-weight:500;color:var(--ink-soft);">${entries.length} Üye</span>
-                    </div>`;
-
+                html += `<div class="mob-time-slot"><div class="mob-time-header"><span>⏰ ${t}</span><span style="font-size:12px;font-weight:500;color:var(--ink-soft);">${entries.length} Üye</span></div>`;
                 let grouped = {};
                 entries.forEach(e => {
                     if (!grouped[e.instructorId]) grouped[e.instructorId] = [];
@@ -1685,19 +1793,10 @@
                 });
 
                 Object.keys(grouped).forEach(instId => {
-                    const instName = getInstructorName(instId);
-                    const instStudents = grouped[instId];
-
-                    html += `<div class="inst-group-box" style="margin-bottom:0;">
-                                <div class="inst-group-title">${escapeHtml(instName)}</div>`;
-
-                    instStudents.forEach(e => {
-                        let cls = '';
-                        let tag = '';
-                        if (e.moved) { cls = 'moved'; tag = ' (Değişiklik)'; }
-                        else if (e.virtual) { cls = 'virtual'; tag = ' (Taşındı)'; }
-                        else if (e.postponed) { cls = 'postponed'; tag = ' (Ertelendi)'; }
-                        else if (e.frozen) { cls = 'frozen'; tag = ' (Donduruldu)'; }
+                    html += `<div class="inst-group-box" style="margin-bottom:0;"><div class="inst-group-title">${escapeHtml(getInstructorName(instId))}</div>`;
+                    grouped[instId].forEach(e => {
+                        let cls = e.moved ? 'moved' : e.virtual ? 'virtual' : e.postponed ? 'postponed' : e.frozen ? 'frozen' : '';
+                        let tag = e.moved ? ' (Değişiklik)' : e.virtual ? ' (Taşındı)' : e.postponed ? ' (Ertelendi)' : e.frozen ? ' (Donduruldu)' : '';
 
                         html += `<div class="cell-entry ${cls}" style="padding:10px 8px;margin-bottom:6px;" data-member-id="${e.memberId}" data-slot-id="${e.slotId}" data-occ-date="${e.occDate}" data-virtual="${e.virtual ? '1' : '0'}">
                                     <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1720,7 +1819,6 @@
                     });
                     html += `</div>`;
                 });
-
                 html += `</div>`;
             }
         });
@@ -1728,7 +1826,6 @@
         if (!html) {
             html = `<div class="empty" style="background:#fff;border-radius:10px;border:1px solid var(--line);"><div class="big">${selectedMobileScheduleDay} Günü Ders Yok</div>Bu güne ait planlanmış seans bulunmuyor.</div>`;
         }
-
         timeline.innerHTML = html;
     }
 
@@ -1745,9 +1842,7 @@
         if (!slot) return;
         if (!slot.attendance) slot.attendance = {};
 
-        if (m.frozenUntil) {
-            delete m.frozenUntil;
-        }
+        if (m.frozenUntil) delete m.frozenUntil;
 
         if (isCompleted) {
             if (m.remaining > 0) {
@@ -1758,7 +1853,6 @@
         } else {
             m.missedCount = (m.missedCount || 0) + 1;
             slot.attendance[occDate] = 'missed';
-
             if (m.missedCount <= 2) {
                 alert(`${m.name} gelmedi. Kalan gelmeme hakkı: ${2 - m.missedCount}`);
             } else {
@@ -1773,6 +1867,7 @@
         saveMembers();
         renderScheduleGrid();
         render();
+        if (currentTab === 'multiStock') renderMultiStock();
     };
 
     document.getElementById('endWeekBtn').addEventListener('click', () => {
@@ -1786,20 +1881,17 @@
         members.forEach(m => {
             (m.schedule || []).forEach(slot => {
                 const occDate = fmtDate(occDateInWindow(slot.day, now));
-                const att = (slot.attendance || {})[occDate];
-                if (att === 'completed') {
+                if ((slot.attendance || {})[occDate] === 'completed') {
                     packageTypeCounts[m.type] = (packageTypeCounts[m.type] || 0) + 1;
                 }
             });
         });
 
-        const tableHtml = document.getElementById('schedTable').innerHTML;
-
         pastWeeks.push({
             id: uid('pw'),
             name: weekName,
             date: todayStr(),
-            tableHtml: tableHtml,
+            tableHtml: document.getElementById('schedTable').innerHTML,
             packageCounts: packageTypeCounts
         });
 
@@ -1822,12 +1914,8 @@
         const pastMonthsCol = document.getElementById('pastMonthsColumn');
         const splitWrap = document.getElementById('pastSplitWrap');
 
-        if (pastMonthsCol) {
-            pastMonthsCol.style.display = isOwner ? 'block' : 'none';
-        }
-        if (splitWrap) {
-            splitWrap.style.gridTemplateColumns = (isOwner && !isMobileView) ? '1fr 1fr' : '1fr';
-        }
+        if (pastMonthsCol) pastMonthsCol.style.display = isOwner ? 'block' : 'none';
+        if (splitWrap) splitWrap.style.gridTemplateColumns = (isOwner && !isMobileView) ? '1fr 1fr' : '1fr';
 
         const weekWrap = document.getElementById('pastWeeksList');
         if (!pastWeeks.length) {
@@ -1858,10 +1946,7 @@
                 pastMonths.slice().reverse().forEach(pm => {
                     html += `
                         <div class="row" style="grid-template-columns:1.2fr 1fr 1fr auto;">
-                          <div>
-                            <div class="m-name">${escapeHtml(pm.monthName)}</div>
-                            <div style="font-size:11px;color:var(--ink-soft);">${pm.closeDate}</div>
-                          </div>
+                          <div><div class="m-name">${escapeHtml(pm.monthName)}</div><div style="font-size:11px;color:var(--ink-soft);">${pm.closeDate}</div></div>
                           <div style="font-size:12.5px;">Ciro: <b>${pm.totalRev.toLocaleString('tr-TR')}₺</b></div>
                           <div style="font-size:12.5px;color:var(--alert);">Hakediş: <b>${pm.totalComm.toLocaleString('tr-TR')}₺</b></div>
                           <div class="row-actions">
@@ -1879,7 +1964,6 @@
     window.openWeekDetail = function(id) {
         const pw = pastWeeks.find(x => x.id === id);
         if (!pw) return;
-
         let countsHtml = '';
         Object.keys(pw.packageCounts || {}).forEach(typeName => {
             const count = pw.packageCounts[typeName];
@@ -1895,13 +1979,9 @@
         document.getElementById('weekDetailTitle').textContent = pw.name;
         document.getElementById('weekDetailBody').innerHTML = `
             <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:0 0 10px;">Tamamlanan Seans Dağılımı</h4>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
-              ${countsHtml || '<div style="color:var(--ink-soft);padding:6px;">Bu hafta tamamlanan seans kaydı yok.</div>'}
-            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">${countsHtml || '<div style="color:var(--ink-soft);padding:6px;">Bu hafta tamamlanan seans kaydı yok.</div>'}</div>
             <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:0 0 10px;">Haftalık Tablo Görüntüsü</h4>
-            <div class="sched-table-wrap" style="max-height:380px;overflow-y:auto;">
-              <table class="sched-table">${pw.tableHtml}</table>
-            </div>`;
+            <div class="sched-table-wrap" style="max-height:380px;overflow-y:auto;"><table class="sched-table">${pw.tableHtml}</table></div>`;
         openPanel('weekDetailPanel');
     };
 
@@ -1923,24 +2003,12 @@
         document.getElementById('monthDetailTitle').textContent = `${pm.monthName} Detayı`;
         document.getElementById('monthDetailBody').innerHTML = `
             <div style="display:flex;gap:10px;margin-bottom:18px;">
-              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
-                <span style="font-size:11px;color:var(--ink-soft);display:block;">DERS CİROSU</span>
-                <b style="font-size:17px;">${pm.totalRev.toLocaleString('tr-TR')}₺</b>
-              </div>
-              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
-                <span style="font-size:11px;color:var(--ink-soft);display:block;">HAKEDİŞLER</span>
-                <b style="font-size:17px;color:var(--alert);">${pm.totalComm.toLocaleString('tr-TR')}₺</b>
-              </div>
-              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;">
-                <span style="font-size:11px;color:var(--ink-soft);display:block;">NET KASA</span>
-                <b style="font-size:17px;color:var(--sage-dark);">${(pm.totalRev - pm.totalComm).toLocaleString('tr-TR')}₺</b>
-              </div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;"><span style="font-size:11px;color:var(--ink-soft);display:block;">DERS CİROSU</span><b style="font-size:17px;">${pm.totalRev.toLocaleString('tr-TR')}₺</b></div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;"><span style="font-size:11px;color:var(--ink-soft);display:block;">HAKEDİŞLER</span><b style="font-size:17px;color:var(--alert);">${pm.totalComm.toLocaleString('tr-TR')}₺</b></div>
+              <div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;"><span style="font-size:11px;color:var(--ink-soft);display:block;">NET KASA</span><b style="font-size:17px;color:var(--sage-dark);">${(pm.totalRev - pm.totalComm).toLocaleString('tr-TR')}₺</b></div>
             </div>
-
             <h4 style="font-size:13px;color:var(--ink-soft);text-transform:uppercase;margin:16px 0 8px;">Hoca Bazlı Hakedişler</h4>
-            <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;">
-              ${instHtml || '<div style="padding:10px;text-align:center;color:var(--ink-soft);">Kayıt bulunamadı.</div>'}
-            </div>`;
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;">${instHtml || '<div style="padding:10px;text-align:center;color:var(--ink-soft);">Kayıt bulunamadı.</div>'}</div>`;
         openPanel('monthDetailPanel');
     };
 
@@ -1964,7 +2032,6 @@
     function renderDemoGrid() {
         const times = getAllTimeSlots();
         const table = document.getElementById('demoTable');
-
         let thead = '<thead><tr><th>Saat</th>' + DAY_ORDER.map(d => `<th>${d}</th>`).join('') + '</tr></thead>';
         let tbody = '<tbody>';
 
@@ -1972,14 +2039,11 @@
             tbody += `<tr><td class="time-cell">${t}</td>`;
             DAY_ORDER.forEach(day => {
                 tbody += `<td class="slot-cell">`;
-
                 instructors.forEach(inst => {
                     let occupants = [];
                     members.forEach(m => {
                         (m.schedule || []).forEach(s => {
-                            if (s.day === day && s.time === t && s.instructorId === inst.id) {
-                                occupants.push({ type: m.type, name: m.name });
-                            }
+                            if (s.day === day && s.time === t && s.instructorId === inst.id) occupants.push({ type: m.type, name: m.name });
                         });
                     });
 
@@ -1988,9 +2052,7 @@
                     if (demo) {
                         tbody += `<div class="demo-inst-row demo-row-booked">${escapeHtml(inst.name)}: Demo (${escapeHtml(demo.name)})</div>`;
                     } else if (occupants.length > 0) {
-                        const firstType = occupants[0].type;
-                        const cap = CAPACITY[firstType] || 1;
-
+                        const cap = CAPACITY[occupants[0].type] || 1;
                         if (cap <= 2) {
                             tbody += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: ${cap === 1 ? 'Bireysel' : 'Düet'} (Dolu)</div>`;
                         } else {
@@ -2002,15 +2064,12 @@
                         }
                     }
                 });
-
                 tbody += `</td>`;
             });
             tbody += `</tr>`;
         });
-
         tbody += '</tbody>';
         table.innerHTML = thead + tbody;
-
         renderMobileDemoView(times);
     }
 
@@ -2029,25 +2088,19 @@
 
         times.forEach(t => {
             let rowHtml = '';
-
             instructors.forEach(inst => {
                 let occupants = [];
                 members.forEach(m => {
                     (m.schedule || []).forEach(s => {
-                        if (s.day === selectedMobileDemoDay && s.time === t && s.instructorId === inst.id) {
-                            occupants.push({ type: m.type, name: m.name });
-                        }
+                        if (s.day === selectedMobileDemoDay && s.time === t && s.instructorId === inst.id) occupants.push({ type: m.type, name: m.name });
                     });
                 });
 
                 const demo = demos.find(d => d.time === t && d.instructorId === inst.id && JS_DOW[new Date(d.date + 'T00:00:00').getDay()] === selectedMobileDemoDay);
-
                 if (demo) {
                     rowHtml += `<div class="demo-inst-row demo-row-booked">${escapeHtml(inst.name)}: Demo (${escapeHtml(demo.name)})</div>`;
                 } else if (occupants.length > 0) {
-                    const firstType = occupants[0].type;
-                    const cap = CAPACITY[firstType] || 1;
-
+                    const cap = CAPACITY[occupants[0].type] || 1;
                     if (cap <= 2) {
                         rowHtml += `<div class="demo-inst-row demo-row-locked">${escapeHtml(inst.name)}: ${cap === 1 ? 'Bireysel' : 'Düet'} (Dolu)</div>`;
                     } else {
@@ -2061,17 +2114,13 @@
             });
 
             if (rowHtml) {
-                html += `<div class="mob-time-slot">
-                    <div class="mob-time-header">⏰ ${t}</div>
-                    ${rowHtml}
-                </div>`;
+                html += `<div class="mob-time-slot"><div class="mob-time-header">⏰ ${t}</div>${rowHtml}</div>`;
             }
         });
 
         if (!html) {
             html = `<div class="empty" style="background:#fff;border-radius:10px;border:1px solid var(--line);"><div class="big">${selectedMobileDemoDay} Müsaitlik Bilgisi</div>Bu günde dolu veya müsait bir seans kaydı bulunmuyor.</div>`;
         }
-
         timeline.innerHTML = html;
     }
 
@@ -2108,7 +2157,7 @@
         openDemoAddModal('Pazartesi', '10:00', instructors[0]?.id);
     });
 
-    /* ---------- 4. GELİR / GİDER (YÖNETİCİ) ---------- */
+    /* GELİR / GİDER HESAPLAMALARI */
     function renderFinance() {
         if (role !== 'sahibi') return;
         const month = document.getElementById('finance-month').value || todayStr().slice(0, 7);
@@ -2133,7 +2182,6 @@
         });
 
         const totalKasa = (lessonRev + multiRevenueMonth) - commTotal;
-
         document.getElementById('financeStats').innerHTML = `
             <div class="stat"><div class="num clay">${(lessonRev + multiRevenueMonth).toLocaleString('tr-TR')}₺</div><div class="label">Toplam Gelir (Ciro + Multi)</div></div>
             <div class="stat"><div class="num alert">${commTotal.toLocaleString('tr-TR')}₺</div><div class="label">Maaş Hakedişleri</div></div>
@@ -2163,12 +2211,10 @@
     }
 
     document.getElementById('finance-month').addEventListener('change', renderFinance);
-
     document.getElementById('closeMonthBtn').addEventListener('click', () => {
         const monthInput = document.getElementById('finance-month').value || todayStr().slice(0, 7);
         const [y, m] = monthInput.split('-');
-        const monthDate = new Date(y, parseInt(m) - 1, 1);
-        const monthName = monthDate.toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+        const monthName = new Date(y, parseInt(m) - 1, 1).toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
 
         if (!confirm(`"${monthName}" dönemini sıfırlayıp Geçmiş Aylar tablosuna kaydetmek istediğinize emin misiniz?`)) return;
 
@@ -2194,13 +2240,7 @@
 
         const instructorDetails = instructors.map(inst => {
             const d = perInst[inst.id] || { rev: 0, comm: 0, count: 0 };
-            return {
-                name: inst.name,
-                prim: inst.primPercent ?? 30,
-                rev: d.rev,
-                count: d.count,
-                comm: d.comm
-            };
+            return { name: inst.name, prim: inst.primPercent ?? 30, rev: d.rev, count: d.count, comm: d.comm };
         });
 
         pastMonths.push({
@@ -2225,13 +2265,14 @@
         renderPastSplitView();
     });
 
-    /* ---------- 5. HOCA YÖNETİMİ ---------- */
+    /* 2. TALEP: Hocalar Yönetimi ve Hoca Şifresi Belirleme */
     function renderInstructorMgmt() {
         const wrap = document.getElementById('instMgmtList');
         wrap.innerHTML = instructors.map(inst => `
-            <div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);">
-              <input value="${escapeHtml(inst.name)}" id="inst-name-${inst.id}" style="flex:1;padding:8px;border:1px solid var(--line);border-radius:6px;"/>
-              <input type="number" value="${inst.primPercent ?? 30}" id="inst-prim-${inst.id}" style="width:80px;padding:8px;border:1px solid var(--line);border-radius:6px;" title="Prim %"/>
+            <div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;">
+              <input value="${escapeHtml(inst.name)}" id="inst-name-${inst.id}" placeholder="Hoca Adı (Giriş Adı)" style="flex:1;min-width:140px;padding:8px;border:1px solid var(--line);border-radius:6px;"/>
+              <input type="text" value="${escapeHtml(inst.pass || '1234')}" id="inst-pass-${inst.id}" placeholder="Şifre" style="width:110px;padding:8px;border:1px solid var(--line);border-radius:6px;" title="Hoca Giriş Şifresi"/>
+              <input type="number" value="${inst.primPercent ?? 30}" id="inst-prim-${inst.id}" style="width:75px;padding:8px;border:1px solid var(--line);border-radius:6px;" title="Prim %"/>
               <button class="icon-btn" onclick="updateInstructor('${inst.id}')">Kaydet</button>
               <button class="icon-btn danger" onclick="removeInstructor('${inst.id}')">Sil</button>
             </div>`).join('');
@@ -2239,12 +2280,15 @@
 
     window.updateInstructor = function(id) {
         const name = document.getElementById(`inst-name-${id}`).value.trim();
+        const pass = document.getElementById(`inst-pass-${id}`).value.trim();
         const prim = parseFloat(document.getElementById(`inst-prim-${id}`).value);
         const inst = instructors.find(i => i.id === id);
         if (inst && name) {
             inst.name = name;
+            inst.pass = pass || '1234';
             inst.primPercent = isNaN(prim) ? 30 : prim;
             saveInstructors();
+            alert(`${name} hocanın bilgileri ve şifresi başarıyla güncellendi!`);
             renderInstructorMgmt();
             renderScheduleGrid();
             render();
@@ -2261,14 +2305,15 @@
     };
 
     document.getElementById('addInstructorBtn').addEventListener('click', () => {
-        const name = prompt('Yeni Hoca Adı:');
+        const name = prompt('Yeni Hoca Adı (Giriş için kullanıcı adı):');
         if (!name || !name.trim()) return;
-        instructors.push({ id: uid('i'), name: name.trim(), primPercent: 30 });
+        const pass = prompt('Bu hoca için giriş şifresi belirleyin:', '1234') || '1234';
+        instructors.push({ id: uid('i'), name: name.trim(), pass: pass.trim(), primPercent: 30 });
         saveInstructors();
         renderInstructorMgmt();
     });
 
-    /* ---------- HATIRLATMALAR ---------- */
+    /* HATIRLATMALAR */
     function renderReminders() {
         const wrap = document.getElementById('reminderDayButtons');
         wrap.innerHTML = DAY_ORDER.map(d => `<button class="filter-chip ${selectedReminderRefDay === d ? 'on' : ''}" onclick="selectReminderDay('${d}')">${d}</button>`).join('');
@@ -2283,9 +2328,7 @@
         let list = [];
         members.forEach(m => {
             (m.schedule || []).forEach(slot => {
-                if (slot.day === reminderTargetDayName) {
-                    list.push({ member: m, time: slot.time });
-                }
+                if (slot.day === reminderTargetDayName) list.push({ member: m, time: slot.time });
             });
         });
 
@@ -2296,16 +2339,13 @@
 
         let html = '<div class="list">';
         list.forEach(item => {
-            html += `<div class="row" style="grid-template-columns:1fr 1fr;">
-                    <div class="m-name">${escapeHtml(item.member.name)}</div>
-                    <div>${item.time}</div>
-                  </div>`;
+            html += `<div class="row" style="grid-template-columns:1fr 1fr;"><div class="m-name">${escapeHtml(item.member.name)}</div><div>${item.time}</div></div>`;
         });
         html += '</div>';
         listWrap.innerHTML = html;
     };
 
-    /* ---------- DONDURMA İŞLEMLERİ ---------- */
+    /* DONDURMA İŞLEMLERİ */
     function openFreezePanelFor(memberId) {
         selectedFreezeMemberId = memberId || null;
         document.getElementById('fr-search').value = '';
@@ -2342,7 +2382,7 @@
         renderCurrentView();
     });
 
-    /* ---------- KONTENJAN KONTROLÜ İLE ÜYE KAYDI ---------- */
+    /* ÜYE KAYDI VE PANEL İŞLEMLERİ */
     function openFreshMemberPanel() {
         editingId = null;
         document.getElementById('panelTitle').textContent = 'Yeni Üye Ekle';
@@ -2391,20 +2431,13 @@
     function checkCapacityLimit(day, time, instructorId, targetType, excludeMemberId = null) {
         const targetCap = CAPACITY[targetType] || 1;
         let existingMembers = [];
-
         members.forEach(m => {
             if (excludeMemberId && m.id === excludeMemberId) return;
             (m.schedule || []).forEach(s => {
-                if (s.day === day && s.time === time && s.instructorId === instructorId) {
-                    existingMembers.push(m);
-                }
+                if (s.day === day && s.time === time && s.instructorId === instructorId) existingMembers.push(m);
             });
         });
-
-        if (existingMembers.length >= targetCap) {
-            return false;
-        }
-        return true;
+        return existingMembers.length < targetCap;
     }
 
     document.getElementById('saveBtn').addEventListener('click', () => {
@@ -2428,9 +2461,7 @@
 
         for (let slot of slots) {
             if (!checkCapacityLimit(slot.day, slot.time, slot.instructorId, type, editingId)) {
-                const instName = getInstructorName(slot.instructorId);
-                const cap = CAPACITY[type] || 1;
-                alert(`Ders Programı Dolu!\n${instName} hocanın ${slot.day} saat ${slot.time} seansında ${cap} kişilik kontenjan doludur, daha fazla üye eklenemez.`);
+                alert(`Ders Programı Dolu!\n${getInstructorName(slot.instructorId)} hocanın ${slot.day} saat ${slot.time} seansında kontenjan doludur.`);
                 return;
             }
         }
@@ -2444,7 +2475,9 @@
                 name, phone, type, remaining, totalSessions, start,
                 schedule: slots,
                 payments: fee > 0 ? [{ amount: fee, date: start || todayStr(), note: 'Kayıt', type: type }] : [],
-                missedCount: 0
+                missedCount: 0,
+                multiStock: 0,
+                multiBalanced: 0
             });
         }
 
@@ -2482,7 +2515,6 @@
         const m = members.find(x => x.id === id);
         document.getElementById('paymentForName').textContent = m ? m.name : '';
         document.getElementById('p-type').innerHTML = PACKAGES.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-        
         const p = PACKAGES.find(x => x.name === (m?.type || PACKAGES[0].name));
         document.getElementById('p-amount').value = p ? (p.price || '') : '';
         document.getElementById('p-date').value = todayStr();
@@ -2507,17 +2539,15 @@
         m.totalSessions = addSessions;
         m.remaining += addSessions;
         m.missedCount = 0;
-
-        if (m.frozenUntil) {
-            delete m.frozenUntil;
-        }
+        if (m.type === "MultiSport Grup Reformer") m.multiBalanced = 0;
+        if (m.frozenUntil) delete m.frozenUntil;
 
         saveMembers();
         closeAllPanels();
         renderCurrentView();
     });
 
-    /* ---------- HÜCRE AKSİYONLARI & AKTİFLEŞTİRME ---------- */
+    /* HÜCRE AKSİYONLARI */
     document.getElementById('schedTable').addEventListener('click', handleCellClick);
     document.getElementById('mobileScheduleTimeline').addEventListener('click', handleCellClick);
 
@@ -2547,16 +2577,8 @@
         document.getElementById('entryChangeForm').style.display = 'none';
 
         const isFrozen = m.frozenUntil && todayStr() <= m.frozenUntil;
-        const unfreezeBtn = document.getElementById('eaUnfreezeBtn');
-        const freezeBtn = document.getElementById('eaFreezeBtn');
-
-        if (isFrozen) {
-            unfreezeBtn.style.display = 'block';
-            freezeBtn.style.display = 'none';
-        } else {
-            unfreezeBtn.style.display = 'none';
-            freezeBtn.style.display = 'block';
-        }
+        document.getElementById('eaUnfreezeBtn').style.display = isFrozen ? 'block' : 'none';
+        document.getElementById('eaFreezeBtn').style.display = isFrozen ? 'none' : 'block';
 
         openPanel('entryActionPanel');
     }
@@ -2565,7 +2587,6 @@
         if (!eaContext) return;
         const m = members.find(x => x.id === eaContext.memberId);
         if (!m) return;
-
         delete m.frozenUntil;
         saveMembers();
         alert(`${m.name} üyesinin dondurulması kaldırıldı ve başarıyla aktifleştirildi.`);
@@ -2619,9 +2640,7 @@
         const m = members.find(x => x.id === eaContext.memberId);
         const slot = m && (m.schedule || []).find(s => s.id === eaContext.slotId);
         if (!slot) return;
-
-        const occStr = fmtDate(occDateInWindow(slot.day, new Date()));
-        slot.postponedOccDate = occStr;
+        slot.postponedOccDate = fmtDate(occDateInWindow(slot.day, new Date()));
         saveMembers();
         closeAllPanels();
         renderScheduleGrid();
@@ -2651,13 +2670,12 @@
             return;
         }
 
-        const occStr = fmtDate(occDateInWindow(slot.day, new Date()));
         slot.override = {
             active: true,
             day: newDay,
             time: newTime,
             instructorId: newInst,
-            forOccDate: occStr
+            forOccDate: fmtDate(occDateInWindow(slot.day, new Date()))
         };
 
         saveMembers();
@@ -2682,7 +2700,7 @@
     document.getElementById('cancelBtn').addEventListener('click', closeAllPanels);
 
     initDeviceDetection();
-    initRole();
+    checkAuth();
     </script>
 </body>
-</html>
+</html
