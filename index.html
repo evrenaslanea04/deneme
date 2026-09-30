@@ -7,6 +7,8 @@
     <title>Fisiolab</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
     :root {
         --bg: #F6F4EF;
@@ -959,6 +961,11 @@
     </div>
 
     <script>
+    // SUPABASE BAĞLANTISI
+    const SUPABASE_URL = "https://dhvpffikjwcmjcxaoluc.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_fMdEWr5bDiJGlIkHcQb3YQ_gUUDYdIr";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const PACKAGES = [
         { name: "8 Seans Grup Reformer - 4'lü Grup", price: 4600, capacity: 4, sessions: 8, group: 'grup' },
         { name: "12 Seans Grup Reformer - 4'lü Grup", price: 6600, capacity: 4, sessions: 12, group: 'grup' },
@@ -1074,26 +1081,67 @@
         }
     }
 
-    function storageGet(k) { try { return localStorage.getItem('app_' + k); } catch (e) { return null; } }
-    function storageSet(k, v) { try { localStorage.setItem('app_' + k, v); } catch (e) {} }
+    // --- SUPABASE BULUT VERİ YÖNETİMİ ---
+    async function cloudSet(key, value) {
+        try {
+            localStorage.setItem('app_' + key, JSON.stringify(value));
+            await supabase
+                .from('studio_data')
+                .upsert({ key: key, value: value, updated_at: new Date().toISOString() });
+        } catch (e) {
+            console.error('Buluta kaydedilemedi:', e);
+        }
+    }
 
     function getAdminPassword() { return storageGet('admin_password') || 'admin'; }
-    function saveMembers() { storageSet('members', JSON.stringify(members)); }
-    function saveInstructors() { storageSet('instructors', JSON.stringify(instructors)); }
-    function saveDemos() { storageSet('demos', JSON.stringify(demos)); }
-    function savePastWeeks() { storageSet('pastWeeks', JSON.stringify(pastWeeks)); }
-    function savePastMonths() { storageSet('pastMonths', JSON.stringify(pastMonths)); }
-    function saveLessonLog() { storageSet('lessonLog', JSON.stringify(lessonLog)); }
-    function saveExtraRevenue() { storageSet('extraRevenue', JSON.stringify(extraRevenueLog)); }
+    function saveMembers() { cloudSet('members', members); }
+    function saveInstructors() { cloudSet('instructors', instructors); }
+    function saveDemos() { cloudSet('demos', demos); }
+    function savePastWeeks() { cloudSet('pastWeeks', pastWeeks); }
+    function savePastMonths() { cloudSet('pastMonths', pastMonths); }
+    function saveLessonLog() { cloudSet('lessonLog', lessonLog); }
+    function saveExtraRevenue() { cloudSet('extraRevenue', extraRevenueLog); }
+    function storageSet(k, v) { cloudSet(k, v); }
+    function storageGet(k) { 
+        try { 
+            const val = localStorage.getItem('app_' + k);
+            return val ? JSON.parse(val) : null; 
+        } catch (e) { 
+            return localStorage.getItem('app_' + k); 
+        } 
+    }
 
-    function loadAll() {
-        try { members = JSON.parse(storageGet('members') || '[]'); } catch (e) { members = []; }
-        try { instructors = JSON.parse(storageGet('instructors') || '[]'); } catch (e) { instructors = []; }
-        try { demos = JSON.parse(storageGet('demos') || '[]'); } catch (e) { demos = []; }
-        try { pastWeeks = JSON.parse(storageGet('pastWeeks') || '[]'); } catch (e) { pastWeeks = []; }
-        try { pastMonths = JSON.parse(storageGet('pastMonths') || '[]'); } catch (e) { pastMonths = []; }
-        try { lessonLog = JSON.parse(storageGet('lessonLog') || '[]'); } catch (e) { lessonLog = []; }
-        try { extraRevenueLog = JSON.parse(storageGet('extraRevenue') || '[]'); } catch (e) { extraRevenueLog = []; }
+    async function loadAll() {
+        try {
+            const { data, error } = await supabase.from('studio_data').select('*');
+            if (error) throw error;
+
+            const dbMap = {};
+            if (data) {
+                data.forEach(row => { dbMap[row.key] = row.value; });
+            }
+
+            members = dbMap['members'] || [];
+            instructors = dbMap['instructors'] || [];
+            demos = dbMap['demos'] || [];
+            pastWeeks = dbMap['pastWeeks'] || [];
+            pastMonths = dbMap['pastMonths'] || [];
+            lessonLog = dbMap['lessonLog'] || [];
+            extraRevenueLog = dbMap['extraRevenue'] || [];
+
+            if (dbMap['admin_password']) {
+                localStorage.setItem('app_admin_password', JSON.stringify(dbMap['admin_password']));
+            }
+        } catch (e) {
+            console.warn('Bulut verisi çekilemedi, yerel hafızadan yükleniyor...', e);
+            try { members = JSON.parse(localStorage.getItem('app_members') || '[]'); } catch (err) { members = []; }
+            try { instructors = JSON.parse(localStorage.getItem('app_instructors') || '[]'); } catch (err) { instructors = []; }
+            try { demos = JSON.parse(localStorage.getItem('app_demos') || '[]'); } catch (err) { demos = []; }
+            try { pastWeeks = JSON.parse(localStorage.getItem('app_pastWeeks') || '[]'); } catch (err) { pastWeeks = []; }
+            try { pastMonths = JSON.parse(localStorage.getItem('app_pastMonths') || '[]'); } catch (err) { pastMonths = []; }
+            try { lessonLog = JSON.parse(localStorage.getItem('app_lessonLog') || '[]'); } catch (err) { lessonLog = []; }
+            try { extraRevenueLog = JSON.parse(localStorage.getItem('app_extraRevenue') || '[]'); } catch (err) { extraRevenueLog = []; }
+        }
 
         members.forEach(m => {
             if (!m.schedule) m.schedule = [];
@@ -1113,10 +1161,30 @@
             saveInstructors();
         } else {
             instructors.forEach(inst => { if (!inst.pass) inst.pass = '1234'; });
-            saveInstructors();
         }
 
         renderCurrentView();
+    }
+
+    // Canlı Senkronizasyon (Biri işlem yaptığında diğer cihazlarda anında güncellensin)
+    function listenLiveUpdates() {
+        supabase
+            .channel('studio-realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'studio_data' }, (payload) => {
+                if (payload.new && payload.new.key) {
+                    const k = payload.new.key;
+                    const v = payload.new.value;
+                    if (k === 'members') members = v;
+                    if (k === 'instructors') instructors = v;
+                    if (k === 'demos') demos = v;
+                    if (k === 'pastWeeks') pastWeeks = v;
+                    if (k === 'pastMonths') pastMonths = v;
+                    if (k === 'lessonLog') lessonLog = v;
+                    if (k === 'extraRevenue') extraRevenueLog = v;
+                    renderCurrentView();
+                }
+            })
+            .subscribe();
     }
 
     /* GİRİŞ EKRANI VE OTURUM YÖNETİMİ */
@@ -2700,7 +2768,10 @@
     document.getElementById('cancelBtn').addEventListener('click', closeAllPanels);
 
     initDeviceDetection();
-    checkAuth();
+    loadAll().then(() => {
+        checkAuth();
+        listenLiveUpdates();
+    });
     </script>
 </body>
-</html
+</html>
