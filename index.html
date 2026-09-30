@@ -7,7 +7,7 @@
     <title>Fisiolab</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase SDK -->
+    <!-- Supabase Kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
     :root {
@@ -964,7 +964,7 @@
     // SUPABASE BAĞLANTISI
     const SUPABASE_URL = "https://dhvpffikjwcmjcxaoluc.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_fMdEWr5bDiJGlIkHcQb3YQ_gUUDYdIr";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
     const PACKAGES = [
         { name: "8 Seans Grup Reformer - 4'lü Grup", price: 4600, capacity: 4, sessions: 8, group: 'grup' },
@@ -993,7 +993,10 @@
     let role = 'hoca';
     let loggedUser = null;
     let members = [];
-    let instructors = [];
+    let instructors = [
+        { id: 'i_default_1', name: 'Hoca 1', primPercent: 30, pass: '1234' },
+        { id: 'i_default_2', name: 'Hoca 2', primPercent: 30, pass: '1234' }
+    ];
     let demos = [];
     let pastWeeks = [];
     let pastMonths = [];
@@ -1081,13 +1084,15 @@
         }
     }
 
-    // --- SUPABASE BULUT VERİ YÖNETİMİ ---
+    // --- SUPABASE BULUT VERİ FONKSİYONLARI ---
     async function cloudSet(key, value) {
         try {
             localStorage.setItem('app_' + key, JSON.stringify(value));
-            await supabase
-                .from('studio_data')
-                .upsert({ key: key, value: value, updated_at: new Date().toISOString() });
+            if (supabase) {
+                await supabase
+                    .from('studio_data')
+                    .upsert({ key: key, value: value, updated_at: new Date().toISOString() });
+            }
         } catch (e) {
             console.error('Buluta kaydedilemedi:', e);
         }
@@ -1112,37 +1117,36 @@
     }
 
     async function loadAll() {
-        try {
-            const { data, error } = await supabase.from('studio_data').select('*');
-            if (error) throw error;
+        if (supabase) {
+            try {
+                const { data, error } = await supabase.from('studio_data').select('*');
+                if (error) throw error;
 
-            const dbMap = {};
-            if (data) {
-                data.forEach(row => { dbMap[row.key] = row.value; });
+                const dbMap = {};
+                if (data && data.length > 0) {
+                    data.forEach(row => { dbMap[row.key] = row.value; });
+                }
+
+                if (dbMap['members']) members = dbMap['members'];
+                if (dbMap['instructors'] && dbMap['instructors'].length > 0) instructors = dbMap['instructors'];
+                if (dbMap['demos']) demos = dbMap['demos'];
+                if (dbMap['pastWeeks']) pastWeeks = dbMap['pastWeeks'];
+                if (dbMap['pastMonths']) pastMonths = dbMap['pastMonths'];
+                if (dbMap['lessonLog']) lessonLog = dbMap['lessonLog'];
+                if (dbMap['extraRevenue']) extraRevenueLog = dbMap['extraRevenue'];
+
+                if (dbMap['admin_password']) {
+                    localStorage.setItem('app_admin_password', JSON.stringify(dbMap['admin_password']));
+                }
+            } catch (e) {
+                console.warn('Buluttan veri çekilemedi, yerel hafızaya dönülüyor...', e);
+                loadFromLocalBackup();
             }
-
-            members = dbMap['members'] || [];
-            instructors = dbMap['instructors'] || [];
-            demos = dbMap['demos'] || [];
-            pastWeeks = dbMap['pastWeeks'] || [];
-            pastMonths = dbMap['pastMonths'] || [];
-            lessonLog = dbMap['lessonLog'] || [];
-            extraRevenueLog = dbMap['extraRevenue'] || [];
-
-            if (dbMap['admin_password']) {
-                localStorage.setItem('app_admin_password', JSON.stringify(dbMap['admin_password']));
-            }
-        } catch (e) {
-            console.warn('Bulut verisi çekilemedi, yerel hafızadan yükleniyor...', e);
-            try { members = JSON.parse(localStorage.getItem('app_members') || '[]'); } catch (err) { members = []; }
-            try { instructors = JSON.parse(localStorage.getItem('app_instructors') || '[]'); } catch (err) { instructors = []; }
-            try { demos = JSON.parse(localStorage.getItem('app_demos') || '[]'); } catch (err) { demos = []; }
-            try { pastWeeks = JSON.parse(localStorage.getItem('app_pastWeeks') || '[]'); } catch (err) { pastWeeks = []; }
-            try { pastMonths = JSON.parse(localStorage.getItem('app_pastMonths') || '[]'); } catch (err) { pastMonths = []; }
-            try { lessonLog = JSON.parse(localStorage.getItem('app_lessonLog') || '[]'); } catch (err) { lessonLog = []; }
-            try { extraRevenueLog = JSON.parse(localStorage.getItem('app_extraRevenue') || '[]'); } catch (err) { extraRevenueLog = []; }
+        } else {
+            loadFromLocalBackup();
         }
 
+        // Üye ve hoca listesi doğrulamaları
         members.forEach(m => {
             if (!m.schedule) m.schedule = [];
             if (!m.payments) m.payments = [];
@@ -1153,7 +1157,7 @@
             m.schedule.forEach(s => { if (!s.attendance) s.attendance = {}; });
         });
 
-        if (!instructors.length) {
+        if (!instructors || instructors.length === 0) {
             instructors = [
                 { id: uid('i'), name: 'Hoca 1', primPercent: 30, pass: '1234' },
                 { id: uid('i'), name: 'Hoca 2', primPercent: 30, pass: '1234' }
@@ -1166,8 +1170,21 @@
         renderCurrentView();
     }
 
-    // Canlı Senkronizasyon (Biri işlem yaptığında diğer cihazlarda anında güncellensin)
+    function loadFromLocalBackup() {
+        try { members = JSON.parse(localStorage.getItem('app_members') || '[]'); } catch (e) { members = []; }
+        try { 
+            const insts = JSON.parse(localStorage.getItem('app_instructors') || '[]'); 
+            if (insts.length > 0) instructors = insts;
+        } catch (e) {}
+        try { demos = JSON.parse(localStorage.getItem('app_demos') || '[]'); } catch (e) { demos = []; }
+        try { pastWeeks = JSON.parse(localStorage.getItem('app_pastWeeks') || '[]'); } catch (e) { pastWeeks = []; }
+        try { pastMonths = JSON.parse(localStorage.getItem('app_pastMonths') || '[]'); } catch (e) { pastMonths = []; }
+        try { lessonLog = JSON.parse(localStorage.getItem('app_lessonLog') || '[]'); } catch (e) { lessonLog = []; }
+        try { extraRevenueLog = JSON.parse(localStorage.getItem('app_extraRevenue') || '[]'); } catch (e) { extraRevenueLog = []; }
+    }
+
     function listenLiveUpdates() {
+        if (!supabase) return;
         supabase
             .channel('studio-realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'studio_data' }, (payload) => {
@@ -1231,7 +1248,7 @@
             document.getElementById('login-pass').value = '';
             checkAuth();
         } else {
-            alert('Kullanıcı adı veya şifre hatalı!');
+            alert('Kullanıcı adı veya şifre hatalı!\n(Varsayılan: Hoca 1 / 1234 veya admin / admin)');
         }
     }
 
@@ -1473,7 +1490,7 @@
         listArea.innerHTML = html;
     }
 
-    /* Multi Okut Butonu: Bildirim/alert çıkarmaz, direkt işler */
+    /* Multi Okut Butonu */
     window.handleMultiOkut = function(memberId) {
         const m = members.find(x => x.id === memberId);
         if (!m) return;
@@ -2333,7 +2350,7 @@
         renderPastSplitView();
     });
 
-    /* 2. TALEP: Hocalar Yönetimi ve Hoca Şifresi Belirleme */
+    /* HOCALAR YÖNETİMİ */
     function renderInstructorMgmt() {
         const wrap = document.getElementById('instMgmtList');
         wrap.innerHTML = instructors.map(inst => `
@@ -2767,9 +2784,10 @@
     overlay.addEventListener('click', closeAllPanels);
     document.getElementById('cancelBtn').addEventListener('click', closeAllPanels);
 
+    // BAŞLATICI
     initDeviceDetection();
+    checkAuth();
     loadAll().then(() => {
-        checkAuth();
         listenLiveUpdates();
     });
     </script>
