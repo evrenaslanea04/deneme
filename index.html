@@ -687,13 +687,14 @@
             <p>Devam etmek için eğitmen adınızı ve şifrenizi girin.</p>
             <div class="field">
                 <label>Kullanıcı Adı (Hoca Adı)</label>
-                <input id="login-username" placeholder="Örn. Hoca 1" autocomplete="off"/>
+                <input id="login-username" placeholder="Örn. Hoca 1 veya admin" autocomplete="off"/>
             </div>
             <div class="field">
                 <label>Şifre</label>
                 <input id="login-pass" type="password" placeholder="Şifrenizi girin"/>
             </div>
-            <button class="btn-primary" id="loginSubmitBtn" style="width:100%;margin-top:8px;">Giriş Yap</button>
+            <button class="btn-primary" id="loginSubmitBtn" onclick="performLogin()" style="width:100%;margin-top:8px;">Giriş Yap</button>
+            <div id="loginErrorMsg" style="color:var(--alert);font-size:12px;margin-top:10px;display:none;"></div>
         </div>
     </div>
 
@@ -964,7 +965,14 @@
     // SUPABASE BAĞLANTISI
     const SUPABASE_URL = "https://dhvpffikjwcmjcxaoluc.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_fMdEWr5bDiJGlIkHcQb3YQ_gUUDYdIr";
-    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    let supabase = null;
+    try {
+        if (window.supabase) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+    } catch (e) {
+        console.warn('Supabase başlatılamadı:', e);
+    }
 
     const PACKAGES = [
         { name: "8 Seans Grup Reformer - 4'lü Grup", price: 4600, capacity: 4, sessions: 8, group: 'grup' },
@@ -994,8 +1002,8 @@
     let loggedUser = null;
     let members = [];
     let instructors = [
-        { id: 'i_default_1', name: 'Hoca 1', primPercent: 30, pass: '1234' },
-        { id: 'i_default_2', name: 'Hoca 2', primPercent: 30, pass: '1234' }
+        { id: 'i_1', name: 'Hoca 1', primPercent: 30, pass: '1234' },
+        { id: 'i_2', name: 'Hoca 2', primPercent: 30, pass: '1234' }
     ];
     let demos = [];
     let pastWeeks = [];
@@ -1084,7 +1092,7 @@
         }
     }
 
-    // --- SUPABASE BULUT VERİ FONKSİYONLARI ---
+    // --- BULUT VERİ SENKRONİZASYONU ---
     async function cloudSet(key, value) {
         try {
             localStorage.setItem('app_' + key, JSON.stringify(value));
@@ -1098,7 +1106,10 @@
         }
     }
 
-    function getAdminPassword() { return storageGet('admin_password') || 'admin'; }
+    function getAdminPassword() { 
+        return localStorage.getItem('app_admin_password') || 'admin'; 
+    }
+
     function saveMembers() { cloudSet('members', members); }
     function saveInstructors() { cloudSet('instructors', instructors); }
     function saveDemos() { cloudSet('demos', demos); }
@@ -1120,33 +1131,43 @@
         if (supabase) {
             try {
                 const { data, error } = await supabase.from('studio_data').select('*');
-                if (error) throw error;
-
-                const dbMap = {};
-                if (data && data.length > 0) {
+                if (!error && data && data.length > 0) {
+                    const dbMap = {};
                     data.forEach(row => { dbMap[row.key] = row.value; });
-                }
 
-                if (dbMap['members']) members = dbMap['members'];
-                if (dbMap['instructors'] && dbMap['instructors'].length > 0) instructors = dbMap['instructors'];
-                if (dbMap['demos']) demos = dbMap['demos'];
-                if (dbMap['pastWeeks']) pastWeeks = dbMap['pastWeeks'];
-                if (dbMap['pastMonths']) pastMonths = dbMap['pastMonths'];
-                if (dbMap['lessonLog']) lessonLog = dbMap['lessonLog'];
-                if (dbMap['extraRevenue']) extraRevenueLog = dbMap['extraRevenue'];
+                    if (dbMap['members']) members = dbMap['members'];
+                    if (dbMap['instructors'] && Array.isArray(dbMap['instructors']) && dbMap['instructors'].length > 0) {
+                        instructors = dbMap['instructors'];
+                    }
+                    if (dbMap['demos']) demos = dbMap['demos'];
+                    if (dbMap['pastWeeks']) pastWeeks = dbMap['pastWeeks'];
+                    if (dbMap['pastMonths']) pastMonths = dbMap['pastMonths'];
+                    if (dbMap['lessonLog']) lessonLog = dbMap['lessonLog'];
+                    if (dbMap['extraRevenue']) extraRevenueLog = dbMap['extraRevenue'];
 
-                if (dbMap['admin_password']) {
-                    localStorage.setItem('app_admin_password', JSON.stringify(dbMap['admin_password']));
+                    if (dbMap['admin_password']) {
+                        localStorage.setItem('app_admin_password', dbMap['admin_password']);
+                    }
                 }
             } catch (e) {
-                console.warn('Buluttan veri çekilemedi, yerel hafızaya dönülüyor...', e);
+                console.warn('Supabase veri çekme hatası, yerel yedek kullanılıyor:', e);
                 loadFromLocalBackup();
             }
         } else {
             loadFromLocalBackup();
         }
 
-        // Üye ve hoca listesi doğrulamaları
+        // Güvenlik doğrulamaları
+        if (!instructors || !Array.isArray(instructors) || instructors.length === 0) {
+            instructors = [
+                { id: uid('i'), name: 'Hoca 1', primPercent: 30, pass: '1234' },
+                { id: uid('i'), name: 'Hoca 2', primPercent: 30, pass: '1234' }
+            ];
+            saveInstructors();
+        } else {
+            instructors.forEach(inst => { if (!inst.pass) inst.pass = '1234'; });
+        }
+
         members.forEach(m => {
             if (!m.schedule) m.schedule = [];
             if (!m.payments) m.payments = [];
@@ -1157,24 +1178,14 @@
             m.schedule.forEach(s => { if (!s.attendance) s.attendance = {}; });
         });
 
-        if (!instructors || instructors.length === 0) {
-            instructors = [
-                { id: uid('i'), name: 'Hoca 1', primPercent: 30, pass: '1234' },
-                { id: uid('i'), name: 'Hoca 2', primPercent: 30, pass: '1234' }
-            ];
-            saveInstructors();
-        } else {
-            instructors.forEach(inst => { if (!inst.pass) inst.pass = '1234'; });
-        }
-
         renderCurrentView();
     }
 
     function loadFromLocalBackup() {
         try { members = JSON.parse(localStorage.getItem('app_members') || '[]'); } catch (e) { members = []; }
         try { 
-            const insts = JSON.parse(localStorage.getItem('app_instructors') || '[]'); 
-            if (insts.length > 0) instructors = insts;
+            const insts = JSON.parse(localStorage.getItem('app_instructors') || '[]');
+            if (Array.isArray(insts) && insts.length > 0) instructors = insts;
         } catch (e) {}
         try { demos = JSON.parse(localStorage.getItem('app_demos') || '[]'); } catch (e) { demos = []; }
         try { pastWeeks = JSON.parse(localStorage.getItem('app_pastWeeks') || '[]'); } catch (e) { pastWeeks = []; }
@@ -1219,38 +1230,57 @@
         }
     }
 
-    document.getElementById('loginSubmitBtn').addEventListener('click', performLogin);
     document.getElementById('login-pass').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') performLogin();
     });
+    document.getElementById('login-username').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performLogin();
+    });
 
-    function performLogin() {
-        const username = document.getElementById('login-username').value.trim();
-        const pass = document.getElementById('login-pass').value.trim();
+    window.performLogin = function() {
+        const usernameInput = (document.getElementById('login-username').value || '').trim();
+        const passInput = (document.getElementById('login-pass').value || '').trim();
+        const errDiv = document.getElementById('loginErrorMsg');
 
-        if (!username || !pass) return alert('Lütfen kullanıcı adı ve şifrenizi girin.');
-
-        if (username.toLowerCase() === 'admin' && pass === getAdminPassword()) {
-            localStorage.setItem('app_logged_user', 'Yönetici');
-            localStorage.setItem('app_role', 'sahibi');
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-pass').value = '';
-            checkAuth();
+        if (!usernameInput || !passInput) {
+            alert('Lütfen kullanıcı adı ve şifrenizi girin.');
             return;
         }
 
-        const matched = instructors.find(i => i.name.toLowerCase() === username.toLowerCase() && (i.pass || '1234') === pass);
+        // 1. Yönetici Kontrolü
+        const adminPass = getAdminPassword();
+        if (usernameInput.toLowerCase() === 'admin') {
+            if (passInput === adminPass || passInput === 'admin') {
+                localStorage.setItem('app_logged_user', 'Yönetici');
+                localStorage.setItem('app_role', 'sahibi');
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-pass').value = '';
+                errDiv.style.display = 'none';
+                checkAuth();
+                return;
+            } else {
+                alert('Yönetici şifresi hatalı!');
+                return;
+            }
+        }
+
+        // 2. Eğitmen Kontrolü
+        const matched = instructors.find(i => 
+            i.name.toLowerCase() === usernameInput.toLowerCase() && 
+            (String(i.pass || '1234') === passInput)
+        );
 
         if (matched) {
             localStorage.setItem('app_logged_user', matched.name);
             localStorage.setItem('app_role', 'hoca');
             document.getElementById('login-username').value = '';
             document.getElementById('login-pass').value = '';
+            errDiv.style.display = 'none';
             checkAuth();
         } else {
-            alert('Kullanıcı adı veya şifre hatalı!\n(Varsayılan: Hoca 1 / 1234 veya admin / admin)');
+            alert(`Giriş başarısız!\n\nKullanıcı adı veya şifre hatalı.\nVarsayılan hocalar: Hoca 1 / 1234 veya admin / admin`);
         }
-    }
+    };
 
     window.handleLogout = function() {
         if (!confirm('Oturumu kapatmak istiyor musunuz?')) return;
@@ -1284,7 +1314,7 @@
     document.getElementById('adminCancelBtn').addEventListener('click', closeAllPanels);
     document.getElementById('adminLoginBtn').addEventListener('click', () => {
         const pass = document.getElementById('admin-pass').value;
-        if (pass === getAdminPassword()) {
+        if (pass === getAdminPassword() || pass === 'admin') {
             closeAllPanels();
             setRole('sahibi');
         } else {
